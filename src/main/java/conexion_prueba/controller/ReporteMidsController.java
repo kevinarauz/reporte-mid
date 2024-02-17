@@ -29,10 +29,17 @@ public class ReporteMidsController {
         return new ResponseEntity<>(reporteMidsService.getJm(), HttpStatus.OK);
     }
     
-    @GetMapping("/ConsultaMidActivos")
+    /*@GetMapping("/ConsultaMidActivos")
     public ResponseEntity<?> consultaMidActivosActualizados() {
         ThreadContext.put("sid", UUID.randomUUID().toString());
         return new ResponseEntity<>(reporteMidsService.consultaMidActivosActualizados(), HttpStatus.OK);
-    }
+    }*/
 
+    @GetMapping("/ConsultaMidActivos")
+    public ResponseEntity<?> consultaMidActivosActualizados() {
+        ThreadContext.put("sid", UUID.randomUUID().toString());
+        this.reporteMidsService.consultaMidActivosActualizados();
+        return new ResponseEntity<>("Oks", HttpStatus.OK);
+    }
+    
 }
