@@ -110,8 +110,7 @@ public class ReporteMidsService {
 	}
 
 	public void consultaMidActivosActualizados(String nombreArchivo) throws IOException {
-		// List<Map<String, Object>> registros =
-		// repositoryReporteMids.consultaMidActivosActualizados("USUARIO");
+		// List<Map<String, Object>> registros = repositoryReporteMids.consultaMidActivosActualizados("JMUNOZ");
 		// Simula la obtención de registros de alguna fuente
 		List<Map<String, Object>> registros = crearDatosPruebasMids();
 		generaExcelXlsx(nombreArchivo, registros);
