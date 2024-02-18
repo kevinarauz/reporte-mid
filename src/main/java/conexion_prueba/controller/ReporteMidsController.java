@@ -1,6 +1,10 @@
 package conexion_prueba.controller;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.logging.log4j.ThreadContext;
@@ -39,13 +43,20 @@ public class ReporteMidsController {
     @GetMapping("/ConsultaMidActivos")
     public ResponseEntity<?> consultaMidActivosActualizados() {
         ThreadContext.put("sid", UUID.randomUUID().toString());
-        
+        String nombreArchivo = "Reporte Mids - " + new SimpleDateFormat("dd-MM-yyyy").format(new Date());
         try {
-			this.reporteMidsService.generaExcelDeConsulta("reportes");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-        return new ResponseEntity<>("Oks", HttpStatus.OK);
+            this.reporteMidsService.consultaMidActivosActualizados(nombreArchivo);
+            String mensajeRespuesta = String.format("El reporte '%s.xlsx' ha sido generado exitosamente.", nombreArchivo);
+            // Puedes retornar el nombre del archivo para que el cliente sepa cómo acceder a él
+            Map<String, String> respuesta = new HashMap<>();
+            respuesta.put("mensaje", mensajeRespuesta);
+            respuesta.put("nombreArchivo", nombreArchivo + ".xlsx");
+            return new ResponseEntity<>(respuesta, HttpStatus.OK);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Ocurrió un error al generar el reporte.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
+
     
 }

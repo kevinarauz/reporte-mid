@@ -109,12 +109,12 @@ public class ReporteMidsService {
 		return registros;
 	}
 
-	public void generaExcelDeConsulta(String nombreArchivo) throws IOException {
+	public void consultaMidActivosActualizados(String nombreArchivo) throws IOException {
 		// List<Map<String, Object>> registros =
 		// repositoryReporteMids.consultaMidActivosActualizados("USUARIO");
 		// Simula la obtención de registros de alguna fuente
 		List<Map<String, Object>> registros = crearDatosPruebasMids();
-		generaExcelXlsx("Reportes Mids", registros);
+		generaExcelXlsx(nombreArchivo, registros);
 	}
 
 	public void generaExcelXlsx(String nombreArchivo, List<Map<String, Object>> registros) throws IOException {
@@ -164,7 +164,7 @@ public class ReporteMidsService {
 		}
 
 		// Escribir el archivo
-		try (FileOutputStream outputStream = new FileOutputStream(nombreArchivo +" - "+hoy+".xlsx")) {
+		try (FileOutputStream outputStream = new FileOutputStream(nombreArchivo+".xlsx")) {
 			workbook.write(outputStream);
 		} finally {
 			workbook.dispose(); // Liberar recursos utilizados por SXSSFWorkbook
