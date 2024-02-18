@@ -112,9 +112,9 @@ public class ReporteMidsService {
 
 	public void consultaMidActivosActualizados(String nombreArchivo) throws IOException {
 		List<String> excludedKeys = Arrays.asList("FECHA_ACTUAL", "USUARIO", "ACTIVO");
-		// List<Map<String, Object>> registros = repositoryReporteMids.consultaMidActivosActualizados("JMUNOZ");
+		List<Map<String, Object>> registros = repositoryReporteMids.consultaMidActivosActualizados("JMUNOZ");
 		// Simula la obtención de registros de alguna fuente
-		List<Map<String, Object>> registros = crearDatosPruebasMids();
+		//List<Map<String, Object>> registros = crearDatosPruebasMids();
 		generaExcelXlsx(nombreArchivo, registros,excludedKeys);
 	}
 
