@@ -4,6 +4,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -110,64 +111,63 @@ public class ReporteMidsService {
 	}
 
 	public void consultaMidActivosActualizados(String nombreArchivo) throws IOException {
+		List<String> excludedKeys = Arrays.asList("FECHA_ACTUAL", "USUARIO", "ACTIVO");
 		// List<Map<String, Object>> registros = repositoryReporteMids.consultaMidActivosActualizados("JMUNOZ");
 		// Simula la obtención de registros de alguna fuente
 		List<Map<String, Object>> registros = crearDatosPruebasMids();
-		generaExcelXlsx(nombreArchivo, registros);
+		generaExcelXlsx(nombreArchivo, registros,excludedKeys);
 	}
 
-	public void generaExcelXlsx(String nombreArchivo, List<Map<String, Object>> registros) throws IOException {
-		// Usando SXSSFWorkbook para manejar grandes volúmenes de filas
-		SXSSFWorkbook workbook = new SXSSFWorkbook();
-		Sheet sheet = workbook.createSheet("Datos");
-		
-		Calendar fecha = Calendar.getInstance();
-        int anio = fecha.get(Calendar.YEAR);
-        int mes = fecha.get(Calendar.MONTH) + 1;
-        int dia = fecha.get(Calendar.DAY_OF_MONTH);
-        String hoy=""+dia+"-"+mes+"-"+anio;
+	public void generaExcelXlsx(String nombreArchivo, List<Map<String, Object>> registros, List<String> excludedKeys) throws IOException {
+        SXSSFWorkbook workbook = new SXSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Datos");
 
-		// Crear fila de encabezado
-		Row headerRow = sheet.createRow(0);
-		if (!registros.isEmpty()) {
-			int cellIndex = 0;
-			for (String key : registros.get(0).keySet()) {
-				Cell cell = headerRow.createCell(cellIndex++);
-				cell.setCellValue(key);
-			}
+        // Encabezados dinámicos basados en las claves de los registros, excluyendo las claves proporcionadas
+        Row headerRow = sheet.createRow(0);
+        if (!registros.isEmpty()) {
+            int cellIndex = 0;
+            Map<String, Object> firstRecord = registros.get(0);
+            for (String key : firstRecord.keySet()) {
+                if (!excludedKeys.contains(key)) { // Verificar si la clave actual no está excluida
+                    Cell cell = headerRow.createCell(cellIndex++);
+                    cell.setCellValue(key);
+                }
+            }
 
-			// Crear las filas de datos
-			int rowIndex = 1;
-			for (Map<String, Object> registro : registros) {
-				Row row = sheet.createRow(rowIndex++);
-				cellIndex = 0;
-				for (String key : registro.keySet()) {
-					Cell cell = row.createCell(cellIndex++);
-					Object value = registro.get(key);
-					if (value instanceof String) {
-						cell.setCellValue((String) value);
-					} else if (value instanceof Number) {
-						cell.setCellValue(((Number) value).doubleValue());
-					} else if (value != null) {
-						cell.setCellValue(value.toString());
-					} else {
-						cell.setCellValue("");
-					}
-				}
-			}
-		}
+            // Crear filas de datos excluyendo las claves proporcionadas
+            int rowIndex = 1;
+            for (Map<String, Object> registro : registros) {
+                Row row = sheet.createRow(rowIndex++);
+                cellIndex = 0;
+                for (Map.Entry<String, Object> entry : registro.entrySet()) {
+                    if (!excludedKeys.contains(entry.getKey())) { // Verificar si la clave actual no está excluida
+                        Cell cell = row.createCell(cellIndex++);
+                        Object value = entry.getValue();
+                        if (value instanceof String) {
+                            cell.setCellValue((String) value);
+                        } else if (value instanceof Number) {
+                            cell.setCellValue(((Number) value).doubleValue());
+                        } else if (value != null) {
+                            cell.setCellValue(value.toString());
+                        } else {
+                            cell.setCellValue("");
+                        }
+                    }
+                }
+            }
+        }
 
-		// Ajustar el tamaño de todas las columnas para que se ajusten al contenido
-		for (int i = 0; i < headerRow.getLastCellNum(); i++) {
-			sheet.autoSizeColumn(i);
-		}
+        // Ajustar tamaño de las columnas
+        for (int i = 0; i < headerRow.getLastCellNum(); i++) {
+            sheet.autoSizeColumn(i);
+        }
 
-		// Escribir el archivo
-		try (FileOutputStream outputStream = new FileOutputStream(nombreArchivo+".xlsx")) {
-			workbook.write(outputStream);
-		} finally {
-			workbook.dispose(); // Liberar recursos utilizados por SXSSFWorkbook
-		}
-	}
+        // Escribir a archivo
+        try (FileOutputStream outputStream = new FileOutputStream(nombreArchivo + ".xlsx")) {
+            workbook.write(outputStream);
+        } finally {
+            workbook.dispose(); // Liberar recursos de SXSSFWorkbook
+        }
+    }
 
 }
