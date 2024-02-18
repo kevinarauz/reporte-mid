@@ -1,5 +1,6 @@
 package conexion_prueba.controller;
 
+import java.io.IOException;
 import java.util.UUID;
 
 import org.apache.logging.log4j.ThreadContext;
@@ -38,7 +39,12 @@ public class ReporteMidsController {
     @GetMapping("/ConsultaMidActivos")
     public ResponseEntity<?> consultaMidActivosActualizados() {
         ThreadContext.put("sid", UUID.randomUUID().toString());
-        this.reporteMidsService.consultaMidActivosActualizados();
+        
+        try {
+			this.reporteMidsService.generaExcelDeConsulta("reportes");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
         return new ResponseEntity<>("Oks", HttpStatus.OK);
     }
     
