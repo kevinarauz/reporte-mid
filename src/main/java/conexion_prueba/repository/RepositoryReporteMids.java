@@ -52,4 +52,15 @@ public class RepositoryReporteMids {
 
         return result;
     }
+	
+	public List<Map<String, Object>> reporteInteroperabilidad(String usuario) {
+        Timestamp now = new Timestamp(new Date().getTime());
+
+        String sql = "EXEC sp_reportes_r_ProcesoCentrosComerciales_debitAct @FECHA = ?, @USUARIO = ?";
+        List<Map<String, Object>> result = jdbcDfreportes.queryForList(sql, now, usuario);
+
+        return result;
+    }
+	
+	
 }

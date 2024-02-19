@@ -188,7 +188,8 @@ public class ReporteMidsService {
             "C.C. MONAY SHOPPING", "C.C. RACAR"));
 	
 	public List<Map<String, Object>> filtrarYSumarRegistros(String regional, String com, String tipo) {
-        List<Map<String, Object>> registros = crearDatosPruebasInteroperabilidad();
+      //  List<Map<String, Object>> registros = crearDatosPruebasInteroperabilidad();
+		List<Map<String, Object>> registros = repositoryReporteMids.reporteInteroperabilidad("JMUNOZ");
         List<Map<String, Object>> registrosFiltrados = new ArrayList<>();
 
         // Filtro basado en los parámetros proporcionados y nombres permitidos
