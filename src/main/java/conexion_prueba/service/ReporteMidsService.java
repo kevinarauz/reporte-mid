@@ -19,8 +19,10 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
+import conexion_prueba.entity.DatosHoja;
 import conexion_prueba.repository.RepositoryReporteMids;
 
 @Service
@@ -112,62 +114,77 @@ public class ReporteMidsService {
 
 	public void consultaMidActivosActualizados(String nombreArchivo) throws IOException {
 		List<String> excludedKeys = Arrays.asList("FECHA_ACTUAL", "USUARIO", "ACTIVO");
-		List<Map<String, Object>> registros = repositoryReporteMids.consultaMidActivosActualizados("JMUNOZ");
-		// Simula la obtención de registros de alguna fuente
-		//List<Map<String, Object>> registros = crearDatosPruebasMids();
-		generaExcelXlsx(nombreArchivo, registros,excludedKeys);
+		// Simulación de la obtención de registros
+		List<Map<String, Object>> registrosCaja = crearDatosPruebasMids(); // "caja"
+		List<Map<String, Object>> registrosPost = crearDatosPruebasMids(); // "post"
+
+		SXSSFWorkbook workbook = new SXSSFWorkbook();
+		generaHoja(workbook, "caja", registrosCaja, excludedKeys);
+		generaHoja(workbook, "post", registrosPost, excludedKeys);
+
+		// Escribir a archivo
+		try (FileOutputStream outputStream = new FileOutputStream(nombreArchivo + ".xlsx")) {
+			workbook.write(outputStream);
+		} finally {
+			workbook.dispose(); // Liberar recursos de SXSSFWorkbook
+		}
 	}
 
-	public void generaExcelXlsx(String nombreArchivo, List<Map<String, Object>> registros, List<String> excludedKeys) throws IOException {
-        SXSSFWorkbook workbook = new SXSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Datos");
+	public void generaHoja(SXSSFWorkbook workbook, String nombreHoja, List<Map<String, Object>> registros,
+			List<String> excludedKeys) {
+		Sheet sheet = workbook.createSheet(nombreHoja);
 
-        // Encabezados dinámicos basados en las claves de los registros, excluyendo las claves proporcionadas
-        Row headerRow = sheet.createRow(0);
-        if (!registros.isEmpty()) {
-            int cellIndex = 0;
-            Map<String, Object> firstRecord = registros.get(0);
-            for (String key : firstRecord.keySet()) {
-                if (!excludedKeys.contains(key)) { // Verificar si la clave actual no está excluida
-                    Cell cell = headerRow.createCell(cellIndex++);
-                    cell.setCellValue(key);
-                }
-            }
+		// Crear el estilo para el encabezado (opcional, similar a lo mostrado
+		// anteriormente)
+		// CellStyle headerStyle = workbook.createCellStyle();
+		// Configurar headerStyle...
 
-            // Crear filas de datos excluyendo las claves proporcionadas
-            int rowIndex = 1;
-            for (Map<String, Object> registro : registros) {
-                Row row = sheet.createRow(rowIndex++);
-                cellIndex = 0;
-                for (Map.Entry<String, Object> entry : registro.entrySet()) {
-                    if (!excludedKeys.contains(entry.getKey())) { // Verificar si la clave actual no está excluida
-                        Cell cell = row.createCell(cellIndex++);
-                        Object value = entry.getValue();
-                        if (value instanceof String) {
-                            cell.setCellValue((String) value);
-                        } else if (value instanceof Number) {
-                            cell.setCellValue(((Number) value).doubleValue());
-                        } else if (value != null) {
-                            cell.setCellValue(value.toString());
-                        } else {
-                            cell.setCellValue("");
-                        }
-                    }
-                }
-            }
-        }
+		// Encabezados dinámicos y creación de filas de datos
+		Row headerRow = sheet.createRow(0);
+		if (!registros.isEmpty()) {
+			int cellIndex = 0;
+			Map<String, Object> firstRecord = registros.get(0);
+			for (String key : firstRecord.keySet()) {
+				if (!excludedKeys.contains(key)) {
+					Cell cell = headerRow.createCell(cellIndex++);
+					cell.setCellValue(key);
+					// cell.setCellStyle(headerStyle);
+				}
+			}
 
-        // Ajustar tamaño de las columnas
-        for (int i = 0; i < headerRow.getLastCellNum(); i++) {
-            sheet.autoSizeColumn(i);
-        }
+			int rowIndex = 1;
+			for (Map<String, Object> registro : registros) {
+	            Row row = sheet.createRow(rowIndex++);
+	            cellIndex = 0;
+	            for (Map.Entry<String, Object> entry : registro.entrySet()) {
+	                if (!excludedKeys.contains(entry.getKey())) {
+	                    Cell cell = row.createCell(cellIndex++);
+	                    Object value = entry.getValue();
+	                    if (value != null) {
+	                        if (value instanceof Date) {
+	                            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	                            cell.setCellValue(dateFormat.format((Date) value));
+	                        } else if (value instanceof Double) {
+	                            cell.setCellValue((Double) value);
+	                        } else if (value instanceof Boolean) {
+	                            cell.setCellValue((Boolean) value);
+	                        } else {
+	                            cell.setCellValue(value.toString());
+	                        }
+	                    } else {
+	                        cell.setCellValue("");
+	                    }
+	                }
+	            }
+	        }
 
-        // Escribir a archivo
-        try (FileOutputStream outputStream = new FileOutputStream(nombreArchivo + ".xlsx")) {
-            workbook.write(outputStream);
-        } finally {
-            workbook.dispose(); // Liberar recursos de SXSSFWorkbook
-        }
-    }
+			// Ajustar el tamaño de las columnas aquí si se desea
+			for (int i = 0; i < headerRow.getLastCellNum(); i++) {
+				sheet.autoSizeColumn(i);
+			}
+
+		}
+
+	}
 
 }
