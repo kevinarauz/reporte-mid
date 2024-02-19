@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class RepositoryReporteMids {
+	
 	private static final Logger log= LoggerFactory.getLogger(RepositoryReporteMids.class);
 
 	@Autowired 
