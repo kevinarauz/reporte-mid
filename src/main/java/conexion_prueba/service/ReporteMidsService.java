@@ -8,8 +8,12 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -121,6 +125,106 @@ public class ReporteMidsService {
 		SXSSFWorkbook workbook = new SXSSFWorkbook();
 		generaHoja(workbook, "caja", registrosCaja, excludedKeys);
 		generaHoja(workbook, "post", registrosPost, excludedKeys);
+
+		// Escribir a archivo
+		try (FileOutputStream outputStream = new FileOutputStream(nombreArchivo + ".xlsx")) {
+			workbook.write(outputStream);
+		} finally {
+			workbook.dispose(); // Liberar recursos de SXSSFWorkbook
+		}
+	}
+	
+	private List<Map<String, Object>> crearDatosPruebasInteroperabilidad() {
+        List<Map<String, Object>> listaRegistros = new ArrayList<>();
+
+        // Registro para Quito
+        Map<String, Object> registro1 = new HashMap<>();
+        registro1.put("NOMBRE", "C.C. GRANADOS VC");
+        registro1.put("TIPO", "EL");
+        registro1.put("TOTALES", 247.114990);
+        registro1.put("MES", 1);
+        registro1.put("AÑO", 2024);
+        registro1.put("COM", "N");
+        registro1.put("USUARIO", "EALFONZO");
+        registro1.put("ACTIVO", "ACT");
+        registro1.put("BANCO", "ALL");
+        registro1.put("REGIONAL", "QUITO");
+        listaRegistros.add(registro1);
+
+        // Registro para Guayaquil
+        Map<String, Object> registro2 = new HashMap<>();
+        registro2.put("NOMBRE", "C.C. BARTOLOME SERRANO");
+        registro2.put("TIPO", "EL");
+        registro2.put("TOTALES", 150.00);
+        registro2.put("MES", 2);
+        registro2.put("ANIO", 2024);
+        registro2.put("COM", "N");
+        registro2.put("USUARIO", "JPEREZ");
+        registro2.put("ACTIVO", "ACT");
+        registro2.put("BANCO", "ALL");
+        registro2.put("REGIONAL", "GUAYAQUIL");
+        listaRegistros.add(registro2);
+
+        // Registro para Cuenca
+        Map<String, Object> registro3 = new HashMap<>();
+        registro3.put("NOMBRE", "C.C. CUENCA VC");
+        registro3.put("TIPO", "VC");
+        registro3.put("TOTALES", 300.00);
+        registro3.put("MES", 3);
+        registro3.put("ANIO", 2024);
+        registro3.put("COM", "N");
+        registro3.put("USUARIO", "MRAMOS");
+        registro3.put("ACTIVO", "INACT");
+        registro3.put("BANCO", "ALL");
+        registro3.put("REGIONAL", "CUENCA");
+        listaRegistros.add(registro3);
+
+        return listaRegistros;
+    }
+	
+	private static final Set<String> nombresPermitidos = new HashSet<>(Arrays.asList(
+            "C.C. BARTOLOME SERRANO", "C.C. CORAL CENTRO", "C.C. EL VERGEL", "C.C. LA PRADERA",
+            "C.C. LAS ORQUIDEAS", "C.C. MALL DEL RIO", "C.C. MILENIUM PLAZA", "C.C. MIRAFLORES",
+            "C.C. MONAY SHOPPING", "C.C. RACAR"));
+	
+	public List<Map<String, Object>> filtrarYSumarRegistros(String regional, String com, String tipo) {
+        List<Map<String, Object>> registros = crearDatosPruebasInteroperabilidad();
+        List<Map<String, Object>> registrosFiltrados = new ArrayList<>();
+
+        // Filtro basado en los parámetros proporcionados y nombres permitidos
+        for (Map<String, Object> registro : registros) {
+            if (nombresPermitidos.contains(registro.get("NOMBRE")) &&
+                    regional.equals(registro.get("REGIONAL")) &&
+                    com.equals(registro.get("COM")) &&
+                    tipo.equals(registro.get("TIPO"))) {
+                registrosFiltrados.add(registro);
+            }
+        }
+
+        // Sumar los totales para cada nombre de C.C. permitido
+        Map<String, Double> totalesPorNombre = registrosFiltrados.stream()
+                .collect(Collectors.groupingBy(
+                        registro -> (String) registro.get("NOMBRE"),
+                        Collectors.summingDouble(registro -> (Double) registro.get("TOTALES"))
+                ));
+
+        // Convertir los totales en una lista de mapas para el resultado deseado
+        List<Map<String, Object>> resultado = new ArrayList<>();
+        totalesPorNombre.forEach((nombre, total) -> {
+            Map<String, Object> registroSuma = new HashMap<>();
+            registroSuma.put("NOMBRE", nombre);
+            registroSuma.put("TOTAL", total);
+            resultado.add(registroSuma);
+        });
+
+        return resultado;
+    }
+	
+	public void reporteInteroperabilidad(String nombreArchivo) throws IOException {
+		List<Map<String, Object>> registrosGuayaquil = filtrarYSumarRegistros("GUAYAQUIL", "N", "EL");
+		List<String> excludedKeys = Arrays.asList("");
+		SXSSFWorkbook workbook = new SXSSFWorkbook();
+		generaHoja(workbook, "Gye", registrosGuayaquil, excludedKeys);
 
 		// Escribir a archivo
 		try (FileOutputStream outputStream = new FileOutputStream(nombreArchivo + ".xlsx")) {
