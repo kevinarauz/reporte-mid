@@ -187,7 +187,7 @@ public class ReporteMidsService {
 
 		// Registro para Guayaquil
 		Map<String, Object> registro4 = new HashMap<>();
-		registro4.put("NOMBRE", "C.C. ALBAN BORJA");
+		registro4.put("NOMBRE", "C.C. SAN MARINO");
 		registro4.put("TIPO", "EL");
 		registro4.put("TOTALES", "150.00");
 		registro4.put("MES", 2);
@@ -247,56 +247,35 @@ public class ReporteMidsService {
 
 	public List<Map<String, Object>> filtrarYSumarRegistros(List<Map<String, Object>> registros, String regional,
 			String com, String tipo) {
-		// List<Map<String, Object>> registros = crearDatosPruebasInteroperabilidad();
-		// List<Map<String, Object>> registros =
-		// repositoryReporteMids.reporteInteroperabilidad("JMUNOZ");
-		nombresPermitidos = new HashSet<>(Arrays.asList(""));
-		List<Map<String, Object>> registrosFiltrados = new ArrayList<>();
-		List<Map<String, Object>> registrosNoValidos = new ArrayList<>();
+		nombresPermitidos = new HashSet<>();
 		// Filtro basado en los parámetros proporcionados y nombres permitidos
-		// Sumar los totales para cada nombre de C.C. permitido y registrar los que no
-		// son válidos
-
-		// Filtro basado en los parámetros proporcionados y nombres permitidos
-		if (regional.equals("GUAYAQUIL")) {
+		switch (regional) {
+		case "GUAYAQUIL":
 			nombresPermitidos = nombresPermitidosGuayaquil;
-		} else if (regional.equals("QUITO")) {
+			break;
+		case "QUITO":
 			nombresPermitidos = nombresPermitidosQuito;
-		} else if (regional.equals("CUENCA")) {
+			break;
+		case "CUENCA":
 			nombresPermitidos = nombresPermitidosCuenca;
+			break;
 		}
-		for (Map<String, Object> registro : registros) {
-			if (nombresPermitidos.contains(registro.get("NOMBRE")) && regional.equals(registro.get("REGIONAL"))
-					&& com.equals(registro.get("COM")) && tipo.equals(registro.get("TIPO"))) {
-				registrosFiltrados.add(registro);
-			}
-		}
+
+		List<Map<String, Object>> registrosFiltrados = registros.stream()
+				.filter(registro -> nombresPermitidos.contains(registro.get("NOMBRE"))
+						&& regional.equals(registro.get("REGIONAL")) && com.equals(registro.get("COM"))
+						&& tipo.equals(registro.get("TIPO")))
+				.collect(Collectors.toList());
 
 		Map<String, Double> totalesPorNombre = new HashMap<>();
+		double sumaTotal = 0.0;
 		for (Map<String, Object> registro : registrosFiltrados) {
-			try {
-				// Intenta convertir el objeto a Double
-				Object totalObj = registro.get("TOTALES");
-
-				Double total = null;
-				if (totalObj instanceof Number) {
-					total = ((Number) totalObj).doubleValue();
-				} else if (totalObj instanceof String) {
-					try {
-						total = Double.parseDouble((String) totalObj);
-					} catch (NumberFormatException e) {
-						log.error("No se pudo convertir el valor a Double: " + totalObj);
-					}
-				} else if (totalObj == null) {
-					log.warn("El valor de TOTALES es null para este registro.");
-				}
+			Double total = obtenerDoubleDeObjeto(registro.get("TOTALES"));
+			if (total != null) {
+				// Redondear a dos decimales
+				total = Math.round(total * 100.0) / 100.0;
 				totalesPorNombre.merge((String) registro.get("NOMBRE"), total, Double::sum);
-			} catch (ClassCastException | NullPointerException e) {
-				// Si no es un Double o es null, registra el error y agrega al array de
-				// registros no válidos
-				log.info("Registro con nombre " + registro.get("NOMBRE") + " no tiene un total válido: "
-						+ registro.get("TOTALES"));
-				registrosNoValidos.add(registro);
+				sumaTotal += total;
 			}
 		}
 
@@ -308,7 +287,28 @@ public class ReporteMidsService {
 			return map;
 		}).collect(Collectors.toList());
 
+		// Agregar la fila final con el total general
+		Map<String, Object> totalGeneral = new HashMap<>();
+		totalGeneral.put("NOMBRE", "Total");
+		// Redondear la suma total a dos decimales
+		totalGeneral.put("TOTALES", Math.round(sumaTotal * 100.0) / 100.0);
+		resultado.add(totalGeneral);
+
 		return resultado;
+	}
+
+	private Double obtenerDoubleDeObjeto(Object obj) {
+		if (obj instanceof Number) {
+			return ((Number) obj).doubleValue();
+		} else if (obj instanceof String) {
+			try {
+				return Double.parseDouble((String) obj);
+			} catch (NumberFormatException e) {
+				// Manejo de error, por ejemplo, log
+				System.err.println("No se pudo convertir el valor a Double: " + obj);
+			}
+		}
+		return null; // En caso de que no se pueda convertir
 	}
 
 	public void reporteInteroperabilidad(String nombreArchivo) throws IOException {
@@ -334,8 +334,12 @@ public class ReporteMidsService {
 		String tituloGYE = "ELECTRON"; // Ejemplo de título
 		generaHoja(workbook, "GYE", registrosGuayaquil, excludedKeys, tituloGYE, inicioFilaGYE);
 
-		inicioFilaGYE = registrosGuayaquil.size() + 4;
+		inicioFilaGYE = registrosGuayaquil.size() + 3;
 		tituloGYE = "MCDEBIT"; // Ejemplo de título
+		generaHoja(workbook, "GYE", registrosGuayaquil, excludedKeys, tituloGYE, inicioFilaGYE);
+		
+		inicioFilaGYE = inicioFilaGYE+registrosGuayaquil.size() + 3;
+		tituloGYE = "INTERDIN"; // Ejemplo de título
 		generaHoja(workbook, "GYE", registrosGuayaquil, excludedKeys, tituloGYE, inicioFilaGYE);
 
 		// Para agregar otro reporte en la misma hoja, calcula el inicio de la fila
@@ -369,7 +373,7 @@ public class ReporteMidsService {
 
 		// Incrementar el inicioFila para empezar a escribir los encabezados debajo del
 		// título
-		inicioFila += 1; // Solo incrementa en 1 para no dejar espacio adicional.
+		// inicioFila += 1; // Solo incrementa en 1 para no dejar espacio adicional.
 
 		Row headerRow = sheet.createRow(++inicioFila); // Usa pre-incremento para mover al siguiente índice.
 		int cellIndex = 0;
@@ -407,7 +411,6 @@ public class ReporteMidsService {
 			sheet.autoSizeColumn(i);
 		}
 	}
-
 
 	// Genera Excel con n hojas de trabajo
 	public void generaHoja(SXSSFWorkbook workbook, String nombreHoja, List<Map<String, Object>> registros,
