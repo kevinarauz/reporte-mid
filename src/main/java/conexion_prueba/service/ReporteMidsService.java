@@ -315,9 +315,9 @@ public class ReporteMidsService {
             "C.C. VENTURA MALL"
     ));
 
-	public List<Map<String, Object>> filtrarYSumarRegistros(String regional, String com, String tipo) {
+	public List<Map<String, Object>> filtrarYSumarRegistros(List<Map<String, Object>> registros, String regional, String com, String tipo) {
 		//List<Map<String, Object>> registros = crearDatosPruebasInteroperabilidad();
-		List<Map<String, Object>> registros = repositoryReporteMids.reporteInteroperabilidad("JMUNOZ");
+		//List<Map<String, Object>> registros = repositoryReporteMids.reporteInteroperabilidad("JMUNOZ");
 		nombresPermitidos = new HashSet<>(Arrays.asList(""));
 		List<Map<String, Object>> registrosFiltrados = new ArrayList<>();
 		List<Map<String, Object>> registrosNoValidos = new ArrayList<>();
@@ -380,10 +380,17 @@ public class ReporteMidsService {
 	}
 
 	public void reporteInteroperabilidad(String nombreArchivo) throws IOException {
-		List<Map<String, Object>> registrosGuayaquil = filtrarYSumarRegistros("GUAYAQUIL", "N", "EL");
+		//List<Map<String, Object>> registros = crearDatosPruebasInteroperabilidad();
+		List<Map<String, Object>> registros = repositoryReporteMids.reporteInteroperabilidad("JMUNOZ");
+		List<Map<String, Object>> registrosGuayaquil = filtrarYSumarRegistros(registros,"GUAYAQUIL", "N", "EL");
+		List<Map<String, Object>> registrosQuito = filtrarYSumarRegistros(registros,"QUITO", "N", "EL");
+		List<Map<String, Object>> registrosCuenta = filtrarYSumarRegistros(registros,"CUENCA", "N", "EL");
+		
 		List<String> excludedKeys = Arrays.asList("");
 		SXSSFWorkbook workbook = new SXSSFWorkbook();
-		generaHoja(workbook, "Gye", registrosGuayaquil, excludedKeys);
+		generaHoja(workbook, "UIO", registrosQuito, excludedKeys);
+		generaHoja(workbook, "GYE", registrosGuayaquil, excludedKeys);
+		generaHoja(workbook, "CUE", registrosCuenta, excludedKeys);
 
 		// Escribir a archivo
 		try (FileOutputStream outputStream = new FileOutputStream(nombreArchivo + ".xlsx")) {
