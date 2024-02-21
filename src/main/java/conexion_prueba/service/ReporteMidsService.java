@@ -18,6 +18,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -144,7 +145,7 @@ public class ReporteMidsService {
 
 		// Registro para Quito
 		Map<String, Object> registro1 = new HashMap<>();
-		registro1.put("NOMBRE", "C.C. GRANADOS VC");
+		registro1.put("NOMBRE", "C.C. ALBAN BORJA");
 		registro1.put("TIPO", "EL");
 		registro1.put("TOTALES", 247.114990);
 		registro1.put("MES", 1);
@@ -158,7 +159,7 @@ public class ReporteMidsService {
 
 		// Registro para Guayaquil
 		Map<String, Object> registro2 = new HashMap<>();
-		registro2.put("NOMBRE", "C.C. BARTOLOME SERRANO");
+		registro2.put("NOMBRE", "C.C. ALBAN BORJA");
 		registro2.put("TIPO", "EL");
 		registro2.put("TOTALES", 150.00);
 		registro2.put("MES", 2);
@@ -172,7 +173,7 @@ public class ReporteMidsService {
 
 		// Registro para Cuenca
 		Map<String, Object> registro3 = new HashMap<>();
-		registro3.put("NOMBRE", "C.C. CUENCA VC");
+		registro3.put("NOMBRE", "C.C. ALBAN BORJA");
 		registro3.put("TIPO", "VC");
 		registro3.put("TOTALES", 300.00);
 		registro3.put("MES", 3);
@@ -186,7 +187,7 @@ public class ReporteMidsService {
 
 		// Registro para Guayaquil
 		Map<String, Object> registro4 = new HashMap<>();
-		registro4.put("NOMBRE", "C.C. BARTOLOME SERRANO");
+		registro4.put("NOMBRE", "C.C. ALBAN BORJA");
 		registro4.put("TIPO", "EL");
 		registro4.put("TOTALES", "150.00");
 		registro4.put("MES", 2);
@@ -200,7 +201,7 @@ public class ReporteMidsService {
 
 		// Registro para Guayaquil
 		Map<String, Object> registro5 = new HashMap<>();
-		registro5.put("NOMBRE", "C.C. BARTOLOME SERRANO");
+		registro5.put("NOMBRE", "C.C. ALBAN BORJA");
 		registro5.put("TIPO", "EL");
 		registro5.put("TOTALES", "null");
 		registro5.put("MES", 2);
@@ -214,110 +215,41 @@ public class ReporteMidsService {
 
 		return listaRegistros;
 	}
-	private Set<String> nombresPermitidos = new HashSet<>(Arrays.asList(""));
-	private static final Set<String> nombresPermitidosGuayaquil = new HashSet<>(Arrays.asList(
-            "C.C. ALBAN BORJA",
-            "C.C. ALBOCENTRO",
-            "C.C. ALHAMBRA",
-            "C.C. AVENTURA PLAZA",
-            "C.C. BLUE COAST CENTER",
-            "C.C. BOCCA",
-            "C.C. CITY MALL",
-            "C.C. DICENTRO",
-            "C.C. GARZOCENTRO MALL",
-            "C.C. GRAN MANZANA",
-            "C.C. LA PIAZZA CIUDAD CELESTE",
-            "C.C. LA PIAZZA SAMBORONDON",
-            "C.C. LA ROTONDA",
-            "C.C. LA TORRE",
-            "C.C. LAGOS PLAZA",
-            "C.C. LAGUNA CLUB",
-            "C.C. LAS TERRAZAS",
-            "C.C. MALL DEL PACIFICO",
-            "C.C. MALL DEL SOL",
-            "C.C. MALL DEL SUR",
-            "C.C. MALL EL FORTIN",
-            "C.C. ORO PLAZA",
-            "C.C. PASEO SHOPPING BABAHOYO",
-            "C.C. PASEO SHOPPING BAHIA",
-            "C.C. PASEO SHOPPING DAULE",
-            "C.C. PASEO SHOPPING DURAN",
-            "C.C. PASEO SHOPPING MACHALA",
-            "C.C. PASEO SHOPPING MANTA",
-            "C.C. PASEO SHOPPING MILAGRO",
-            "C.C. PASEO SHOPPING PENINSULA",
-            "C.C. PASEO SHOPPING PLAYAS",
-            "C.C. PASEO SHOPPING PORTOVIEJO",
-            "C.C. PASEO SHOPPING QUEVEDO",
-            "C.C. PASEO SHOPPING VIA DAULE",
-            "C.C. PIAZZA CEIBOS",
-            "C.C. PIAZZA MACHALA",
-            "C.C. PIAZZA VILLA CLUB",
-            "C.C. PLAZA MAYOR",
-            "C.C. PLAZA NAVONA",
-            "C.C. PLAZA QUIL",
-            "C.C. PLAZA TRIANGULO",
-            "C.C. PLAZA VICTORIA",
-            "C.C. POLICENTRO",
-            "C.C. RIOCENTRO CEIBOS",
-            "C.C. RIOCENTRO EL DORADO",
-            "C.C. RIOCENTRO ENTRE RIOS",
-            "C.C. RIOCENTRO NORTE",
-            "C.C. RIOCENTRO SUR",
-            "C.C. SAMBORONDON PLAZA",
-            "C.C. SAN MARINO",
-            "C.C. TERMINAL TERRESTRE",
-            "C.C. UNICENTRO",
-            "C.C. VILLAGE PLAZA"
-    ));
-	private static final Set<String> nombresPermitidosCuenca = new HashSet<>(Arrays.asList(
-            "C.C. BARTOLOME SERRANO",
-            "C.C. CORAL CENTRO",
-            "C.C. EL VERGEL",
-            "C.C. LA PRADERA",
-            "C.C. LAS ORQUIDEAS",
-            "C.C. MALL DEL RIO",
-            "C.C. MILENIUM PLAZA",
-            "C.C. MIRAFLORES",
-            "C.C. MONAY SHOPPING",
-            "C.C. RACAR"
-    ));
-	
-	private static final Set<String> nombresPermitidosQuito = new HashSet<>(Arrays.asList(
-            "C.C. ATAHUALPA",
-            "C.C. CARACOL",
-            "C.C. EL BOSQUE",
-            "C.C. EL CONDADO",
-            "C.C. EL PORTAL",
-            "C.C. EL RECREO",
-            "C.C. GRANADOS OUTLET",
-            "C.C. I#AQUITO",
-            "C.C. LA PLAZA",
-            "C.C. LAGUNA MALL",
-            "C.C. MALL DE LOS ANDES",
-            "C.C. MALL EL JARDIN",
-            "C.C. MALTERIA",
-            "C.C. MEGAMAXI",
-            "C.C. MULTIPLAZA",
-            "C.C. MULTIPLAZA RIOBAMBA",
-            "C.C. PASEO SAN FRANCISCO",
-            "C.C. PASEO SHOPPING AMBATO",
-            "C.C. PASEO SHOPPING RIOBAMBA",
-            "C.C. PASEO SHOPPING ST DOMINGO",
-            "C.C. PLAZA CUMBAYA",
-            "C.C. PLAZA DE LAS AMERICAS",
-            "C.C. PLAZA DEL RANCHO",
-            "C.C. QUICENTRO SHOPPING",
-            "C.C. QUICENTRO SUR",
-            "C.C. RIVER MALL",
-            "C.C. SAN LUIS SHOPPING",
-            "C.C. SCALA SHOPPING",
-            "C.C. VENTURA MALL"
-    ));
 
-	public List<Map<String, Object>> filtrarYSumarRegistros(List<Map<String, Object>> registros, String regional, String com, String tipo) {
-		//List<Map<String, Object>> registros = crearDatosPruebasInteroperabilidad();
-		//List<Map<String, Object>> registros = repositoryReporteMids.reporteInteroperabilidad("JMUNOZ");
+	private Set<String> nombresPermitidos = new HashSet<>(Arrays.asList(""));
+	private static final Set<String> nombresPermitidosGuayaquil = new HashSet<>(Arrays.asList("C.C. ALBAN BORJA",
+			"C.C. ALBOCENTRO", "C.C. ALHAMBRA", "C.C. AVENTURA PLAZA", "C.C. BLUE COAST CENTER", "C.C. BOCCA",
+			"C.C. CITY MALL", "C.C. DICENTRO", "C.C. GARZOCENTRO MALL", "C.C. GRAN MANZANA",
+			"C.C. LA PIAZZA CIUDAD CELESTE", "C.C. LA PIAZZA SAMBORONDON", "C.C. LA ROTONDA", "C.C. LA TORRE",
+			"C.C. LAGOS PLAZA", "C.C. LAGUNA CLUB", "C.C. LAS TERRAZAS", "C.C. MALL DEL PACIFICO", "C.C. MALL DEL SOL",
+			"C.C. MALL DEL SUR", "C.C. MALL EL FORTIN", "C.C. ORO PLAZA", "C.C. PASEO SHOPPING BABAHOYO",
+			"C.C. PASEO SHOPPING BAHIA", "C.C. PASEO SHOPPING DAULE", "C.C. PASEO SHOPPING DURAN",
+			"C.C. PASEO SHOPPING MACHALA", "C.C. PASEO SHOPPING MANTA", "C.C. PASEO SHOPPING MILAGRO",
+			"C.C. PASEO SHOPPING PENINSULA", "C.C. PASEO SHOPPING PLAYAS", "C.C. PASEO SHOPPING PORTOVIEJO",
+			"C.C. PASEO SHOPPING QUEVEDO", "C.C. PASEO SHOPPING VIA DAULE", "C.C. PIAZZA CEIBOS", "C.C. PIAZZA MACHALA",
+			"C.C. PIAZZA VILLA CLUB", "C.C. PLAZA MAYOR", "C.C. PLAZA NAVONA", "C.C. PLAZA QUIL",
+			"C.C. PLAZA TRIANGULO", "C.C. PLAZA VICTORIA", "C.C. POLICENTRO", "C.C. RIOCENTRO CEIBOS",
+			"C.C. RIOCENTRO EL DORADO", "C.C. RIOCENTRO ENTRE RIOS", "C.C. RIOCENTRO NORTE", "C.C. RIOCENTRO SUR",
+			"C.C. SAMBORONDON PLAZA", "C.C. SAN MARINO", "C.C. TERMINAL TERRESTRE", "C.C. UNICENTRO",
+			"C.C. VILLAGE PLAZA"));
+	private static final Set<String> nombresPermitidosCuenca = new HashSet<>(Arrays.asList("C.C. BARTOLOME SERRANO",
+			"C.C. CORAL CENTRO", "C.C. EL VERGEL", "C.C. LA PRADERA", "C.C. LAS ORQUIDEAS", "C.C. MALL DEL RIO",
+			"C.C. MILENIUM PLAZA", "C.C. MIRAFLORES", "C.C. MONAY SHOPPING", "C.C. RACAR"));
+
+	private static final Set<String> nombresPermitidosQuito = new HashSet<>(Arrays.asList("C.C. ATAHUALPA",
+			"C.C. CARACOL", "C.C. EL BOSQUE", "C.C. EL CONDADO", "C.C. EL PORTAL", "C.C. EL RECREO",
+			"C.C. GRANADOS OUTLET", "C.C. I#AQUITO", "C.C. LA PLAZA", "C.C. LAGUNA MALL", "C.C. MALL DE LOS ANDES",
+			"C.C. MALL EL JARDIN", "C.C. MALTERIA", "C.C. MEGAMAXI", "C.C. MULTIPLAZA", "C.C. MULTIPLAZA RIOBAMBA",
+			"C.C. PASEO SAN FRANCISCO", "C.C. PASEO SHOPPING AMBATO", "C.C. PASEO SHOPPING RIOBAMBA",
+			"C.C. PASEO SHOPPING ST DOMINGO", "C.C. PLAZA CUMBAYA", "C.C. PLAZA DE LAS AMERICAS",
+			"C.C. PLAZA DEL RANCHO", "C.C. QUICENTRO SHOPPING", "C.C. QUICENTRO SUR", "C.C. RIVER MALL",
+			"C.C. SAN LUIS SHOPPING", "C.C. SCALA SHOPPING", "C.C. VENTURA MALL"));
+
+	public List<Map<String, Object>> filtrarYSumarRegistros(List<Map<String, Object>> registros, String regional,
+			String com, String tipo) {
+		// List<Map<String, Object>> registros = crearDatosPruebasInteroperabilidad();
+		// List<Map<String, Object>> registros =
+		// repositoryReporteMids.reporteInteroperabilidad("JMUNOZ");
 		nombresPermitidos = new HashSet<>(Arrays.asList(""));
 		List<Map<String, Object>> registrosFiltrados = new ArrayList<>();
 		List<Map<String, Object>> registrosNoValidos = new ArrayList<>();
@@ -326,11 +258,11 @@ public class ReporteMidsService {
 		// son válidos
 
 		// Filtro basado en los parámetros proporcionados y nombres permitidos
-		if(regional.equals("GUAYAQUIL")) {
+		if (regional.equals("GUAYAQUIL")) {
 			nombresPermitidos = nombresPermitidosGuayaquil;
-		} else if(regional.equals("QUITO")){
+		} else if (regional.equals("QUITO")) {
 			nombresPermitidos = nombresPermitidosQuito;
-		} else if(regional.equals("CUENCA")){
+		} else if (regional.equals("CUENCA")) {
 			nombresPermitidos = nombresPermitidosCuenca;
 		}
 		for (Map<String, Object> registro : registros) {
@@ -380,17 +312,37 @@ public class ReporteMidsService {
 	}
 
 	public void reporteInteroperabilidad(String nombreArchivo) throws IOException {
-		//List<Map<String, Object>> registros = crearDatosPruebasInteroperabilidad();
-		List<Map<String, Object>> registros = repositoryReporteMids.reporteInteroperabilidad("JMUNOZ");
-		List<Map<String, Object>> registrosGuayaquil = filtrarYSumarRegistros(registros,"GUAYAQUIL", "N", "EL");
-		List<Map<String, Object>> registrosQuito = filtrarYSumarRegistros(registros,"QUITO", "N", "EL");
-		List<Map<String, Object>> registrosCuenta = filtrarYSumarRegistros(registros,"CUENCA", "N", "EL");
-		
+		List<Map<String, Object>> registros = crearDatosPruebasInteroperabilidad();
+		// List<Map<String, Object>> registros =
+		// repositoryReporteMids.reporteInteroperabilidad("JMUNOZ");
+		List<Map<String, Object>> registrosGuayaquil = filtrarYSumarRegistros(registros, "GUAYAQUIL", "N", "EL");
+		List<Map<String, Object>> registrosQuito = filtrarYSumarRegistros(registros, "QUITO", "N", "EL");
+		List<Map<String, Object>> registrosCuenta = filtrarYSumarRegistros(registros, "CUENCA", "N", "EL");
+
 		List<String> excludedKeys = Arrays.asList("");
 		SXSSFWorkbook workbook = new SXSSFWorkbook();
-		generaHoja(workbook, "UIO", registrosQuito, excludedKeys);
-		generaHoja(workbook, "GYE", registrosGuayaquil, excludedKeys);
-		generaHoja(workbook, "CUE", registrosCuenta, excludedKeys);
+		// generaHoja(workbook, "UIO", registrosQuito, excludedKeys);
+		// generaHoja(workbook, "GYE", registrosGuayaquil, excludedKeys);
+		// generaHoja(workbook, "CUE", registrosCuenta, excludedKeys);
+
+		int inicioFilaUIO = 0;
+		String tituloUIO = "ELECTRON";
+		generaHoja(workbook, "UIO", registrosGuayaquil, excludedKeys, tituloUIO, inicioFilaUIO);
+
+		// Al generar el reporte
+		int inicioFilaGYE = 0; // Comenzar desde la fila 0 para el primer reporte
+		String tituloGYE = "ELECTRON"; // Ejemplo de título
+		generaHoja(workbook, "GYE", registrosGuayaquil, excludedKeys, tituloGYE, inicioFilaGYE);
+
+		inicioFilaGYE = registrosGuayaquil.size() + 3;
+		tituloGYE = "MCDEBIT"; // Ejemplo de título
+		generaHoja(workbook, "GYE", registrosGuayaquil, excludedKeys, tituloGYE, inicioFilaGYE);
+
+		// Para agregar otro reporte en la misma hoja, calcula el inicio de la fila
+		// basándote en el último reporte
+		int inicioFilaCUE = 0;
+		String tituloCUE = "ELECTRON";
+		generaHoja(workbook, "CUE", registrosGuayaquil, excludedKeys, tituloCUE, inicioFilaCUE);
 
 		// Escribir a archivo
 		try (FileOutputStream outputStream = new FileOutputStream(nombreArchivo + ".xlsx")) {
@@ -400,6 +352,64 @@ public class ReporteMidsService {
 		}
 	}
 
+	public void generaHoja(SXSSFWorkbook workbook, String nombreHoja, List<Map<String, Object>> registros,
+			List<String> excludedKeys, String titulo, int inicioFila) {
+		Sheet sheet = workbook.getSheet(nombreHoja);
+		if (sheet == null) {
+			sheet = workbook.createSheet(nombreHoja);
+		}
+
+		// Insertar el título del reporte
+		Row tituloRow = sheet.createRow(inicioFila);
+		Cell tituloCell = tituloRow.createCell(0);
+		tituloCell.setCellValue(titulo);
+
+		// Fusionar celdas para el título si es necesario
+		sheet.addMergedRegion(new CellRangeAddress(inicioFila, inicioFila, 0, registros.get(0).keySet().size() - 1));
+
+		// Incrementar el inicioFila para empezar a escribir los encabezados y datos
+		// debajo del título
+		inicioFila += 2; // Asumiendo que quieres un espacio entre el título y los datos
+
+		Row headerRow = sheet.createRow(inicioFila);
+		int cellIndex = 0;
+		for (String key : registros.get(0).keySet()) {
+			if (!excludedKeys.contains(key)) {
+				Cell cell = headerRow.createCell(cellIndex++);
+				cell.setCellValue(key);
+			}
+		}
+
+		// Crear filas de datos
+		int rowIndex = inicioFila + 1;
+		for (Map<String, Object> registro : registros) {
+			Row row = sheet.createRow(rowIndex++);
+			cellIndex = 0;
+			for (Map.Entry<String, Object> entry : registro.entrySet()) {
+				if (!excludedKeys.contains(entry.getKey())) {
+					Cell cell = row.createCell(cellIndex++);
+					Object value = entry.getValue();
+					// Asignar valor a la celda basado en su tipo
+					if (value instanceof Date) {
+						cell.setCellValue((Date) value);
+					} else if (value instanceof Boolean) {
+						cell.setCellValue((Boolean) value);
+					} else if (value instanceof Number) {
+						cell.setCellValue(((Number) value).doubleValue());
+					} else {
+						cell.setCellValue(value.toString());
+					}
+				}
+			}
+		}
+
+		// Ajustar el tamaño de las columnas aquí si se desea
+		for (int i = 0; i < cellIndex; i++) {
+			sheet.autoSizeColumn(i);
+		}
+	}
+
+	// Genera Excel con n hojas de trabajo
 	public void generaHoja(SXSSFWorkbook workbook, String nombreHoja, List<Map<String, Object>> registros,
 			List<String> excludedKeys) {
 		Sheet sheet = workbook.createSheet(nombreHoja);
