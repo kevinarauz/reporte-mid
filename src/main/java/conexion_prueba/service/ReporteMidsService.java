@@ -214,14 +214,111 @@ public class ReporteMidsService {
 
 		return listaRegistros;
 	}
-
-	private static final Set<String> nombresPermitidos = new HashSet<>(Arrays.asList("C.C. BARTOLOME SERRANO",
-			"C.C. CORAL CENTRO", "C.C. EL VERGEL", "C.C. LA PRADERA", "C.C. LAS ORQUIDEAS", "C.C. MALL DEL RIO",
-			"C.C. MILENIUM PLAZA", "C.C. MIRAFLORES", "C.C. MONAY SHOPPING", "C.C. RACAR"));
+	private Set<String> nombresPermitidos = new HashSet<>(Arrays.asList(""));
+	private static final Set<String> nombresPermitidosGuayaquil = new HashSet<>(Arrays.asList(
+            "C.C. ALBAN BORJA",
+            "C.C. ALBOCENTRO",
+            "C.C. ALHAMBRA",
+            "C.C. AVENTURA PLAZA",
+            "C.C. BLUE COAST CENTER",
+            "C.C. BOCCA",
+            "C.C. CITY MALL",
+            "C.C. DICENTRO",
+            "C.C. GARZOCENTRO MALL",
+            "C.C. GRAN MANZANA",
+            "C.C. LA PIAZZA CIUDAD CELESTE",
+            "C.C. LA PIAZZA SAMBORONDON",
+            "C.C. LA ROTONDA",
+            "C.C. LA TORRE",
+            "C.C. LAGOS PLAZA",
+            "C.C. LAGUNA CLUB",
+            "C.C. LAS TERRAZAS",
+            "C.C. MALL DEL PACIFICO",
+            "C.C. MALL DEL SOL",
+            "C.C. MALL DEL SUR",
+            "C.C. MALL EL FORTIN",
+            "C.C. ORO PLAZA",
+            "C.C. PASEO SHOPPING BABAHOYO",
+            "C.C. PASEO SHOPPING BAHIA",
+            "C.C. PASEO SHOPPING DAULE",
+            "C.C. PASEO SHOPPING DURAN",
+            "C.C. PASEO SHOPPING MACHALA",
+            "C.C. PASEO SHOPPING MANTA",
+            "C.C. PASEO SHOPPING MILAGRO",
+            "C.C. PASEO SHOPPING PENINSULA",
+            "C.C. PASEO SHOPPING PLAYAS",
+            "C.C. PASEO SHOPPING PORTOVIEJO",
+            "C.C. PASEO SHOPPING QUEVEDO",
+            "C.C. PASEO SHOPPING VIA DAULE",
+            "C.C. PIAZZA CEIBOS",
+            "C.C. PIAZZA MACHALA",
+            "C.C. PIAZZA VILLA CLUB",
+            "C.C. PLAZA MAYOR",
+            "C.C. PLAZA NAVONA",
+            "C.C. PLAZA QUIL",
+            "C.C. PLAZA TRIANGULO",
+            "C.C. PLAZA VICTORIA",
+            "C.C. POLICENTRO",
+            "C.C. RIOCENTRO CEIBOS",
+            "C.C. RIOCENTRO EL DORADO",
+            "C.C. RIOCENTRO ENTRE RIOS",
+            "C.C. RIOCENTRO NORTE",
+            "C.C. RIOCENTRO SUR",
+            "C.C. SAMBORONDON PLAZA",
+            "C.C. SAN MARINO",
+            "C.C. TERMINAL TERRESTRE",
+            "C.C. UNICENTRO",
+            "C.C. VILLAGE PLAZA"
+    ));
+	private static final Set<String> nombresPermitidosCuenca = new HashSet<>(Arrays.asList(
+            "C.C. BARTOLOME SERRANO",
+            "C.C. CORAL CENTRO",
+            "C.C. EL VERGEL",
+            "C.C. LA PRADERA",
+            "C.C. LAS ORQUIDEAS",
+            "C.C. MALL DEL RIO",
+            "C.C. MILENIUM PLAZA",
+            "C.C. MIRAFLORES",
+            "C.C. MONAY SHOPPING",
+            "C.C. RACAR"
+    ));
+	
+	private static final Set<String> nombresPermitidosQuito = new HashSet<>(Arrays.asList(
+            "C.C. ATAHUALPA",
+            "C.C. CARACOL",
+            "C.C. EL BOSQUE",
+            "C.C. EL CONDADO",
+            "C.C. EL PORTAL",
+            "C.C. EL RECREO",
+            "C.C. GRANADOS OUTLET",
+            "C.C. I#AQUITO",
+            "C.C. LA PLAZA",
+            "C.C. LAGUNA MALL",
+            "C.C. MALL DE LOS ANDES",
+            "C.C. MALL EL JARDIN",
+            "C.C. MALTERIA",
+            "C.C. MEGAMAXI",
+            "C.C. MULTIPLAZA",
+            "C.C. MULTIPLAZA RIOBAMBA",
+            "C.C. PASEO SAN FRANCISCO",
+            "C.C. PASEO SHOPPING AMBATO",
+            "C.C. PASEO SHOPPING RIOBAMBA",
+            "C.C. PASEO SHOPPING ST DOMINGO",
+            "C.C. PLAZA CUMBAYA",
+            "C.C. PLAZA DE LAS AMERICAS",
+            "C.C. PLAZA DEL RANCHO",
+            "C.C. QUICENTRO SHOPPING",
+            "C.C. QUICENTRO SUR",
+            "C.C. RIVER MALL",
+            "C.C. SAN LUIS SHOPPING",
+            "C.C. SCALA SHOPPING",
+            "C.C. VENTURA MALL"
+    ));
 
 	public List<Map<String, Object>> filtrarYSumarRegistros(String regional, String com, String tipo) {
 		//List<Map<String, Object>> registros = crearDatosPruebasInteroperabilidad();
 		List<Map<String, Object>> registros = repositoryReporteMids.reporteInteroperabilidad("JMUNOZ");
+		nombresPermitidos = new HashSet<>(Arrays.asList(""));
 		List<Map<String, Object>> registrosFiltrados = new ArrayList<>();
 		List<Map<String, Object>> registrosNoValidos = new ArrayList<>();
 		// Filtro basado en los parámetros proporcionados y nombres permitidos
@@ -229,6 +326,13 @@ public class ReporteMidsService {
 		// son válidos
 
 		// Filtro basado en los parámetros proporcionados y nombres permitidos
+		if(regional.equals("GUAYAQUIL")) {
+			nombresPermitidos = nombresPermitidosGuayaquil;
+		} else if(regional.equals("QUITO")){
+			nombresPermitidos = nombresPermitidosQuito;
+		} else if(regional.equals("CUENCA")){
+			nombresPermitidos = nombresPermitidosCuenca;
+		}
 		for (Map<String, Object> registro : registros) {
 			if (nombresPermitidos.contains(registro.get("NOMBRE")) && regional.equals(registro.get("REGIONAL"))
 					&& com.equals(registro.get("COM")) && tipo.equals(registro.get("TIPO"))) {
