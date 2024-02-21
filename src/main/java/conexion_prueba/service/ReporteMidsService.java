@@ -334,7 +334,7 @@ public class ReporteMidsService {
 		String tituloGYE = "ELECTRON"; // Ejemplo de título
 		generaHoja(workbook, "GYE", registrosGuayaquil, excludedKeys, tituloGYE, inicioFilaGYE);
 
-		inicioFilaGYE = registrosGuayaquil.size() + 3;
+		inicioFilaGYE = registrosGuayaquil.size() + 4;
 		tituloGYE = "MCDEBIT"; // Ejemplo de título
 		generaHoja(workbook, "GYE", registrosGuayaquil, excludedKeys, tituloGYE, inicioFilaGYE);
 
@@ -364,14 +364,14 @@ public class ReporteMidsService {
 		Cell tituloCell = tituloRow.createCell(0);
 		tituloCell.setCellValue(titulo);
 
-		// Fusionar celdas para el título si es necesario
+		// Fusionar celdas para el título
 		sheet.addMergedRegion(new CellRangeAddress(inicioFila, inicioFila, 0, registros.get(0).keySet().size() - 1));
 
-		// Incrementar el inicioFila para empezar a escribir los encabezados y datos
-		// debajo del título
-		inicioFila += 2; // Asumiendo que quieres un espacio entre el título y los datos
+		// Incrementar el inicioFila para empezar a escribir los encabezados debajo del
+		// título
+		inicioFila += 1; // Solo incrementa en 1 para no dejar espacio adicional.
 
-		Row headerRow = sheet.createRow(inicioFila);
+		Row headerRow = sheet.createRow(++inicioFila); // Usa pre-incremento para mover al siguiente índice.
 		int cellIndex = 0;
 		for (String key : registros.get(0).keySet()) {
 			if (!excludedKeys.contains(key)) {
@@ -381,9 +381,8 @@ public class ReporteMidsService {
 		}
 
 		// Crear filas de datos
-		int rowIndex = inicioFila + 1;
 		for (Map<String, Object> registro : registros) {
-			Row row = sheet.createRow(rowIndex++);
+			Row row = sheet.createRow(++inicioFila); // Usa pre-incremento para mover al siguiente índice.
 			cellIndex = 0;
 			for (Map.Entry<String, Object> entry : registro.entrySet()) {
 				if (!excludedKeys.contains(entry.getKey())) {
@@ -403,11 +402,12 @@ public class ReporteMidsService {
 			}
 		}
 
-		// Ajustar el tamaño de las columnas aquí si se desea
+		// Ajustar el tamaño de las columnas
 		for (int i = 0; i < cellIndex; i++) {
 			sheet.autoSizeColumn(i);
 		}
 	}
+
 
 	// Genera Excel con n hojas de trabajo
 	public void generaHoja(SXSSFWorkbook workbook, String nombreHoja, List<Map<String, Object>> registros,
