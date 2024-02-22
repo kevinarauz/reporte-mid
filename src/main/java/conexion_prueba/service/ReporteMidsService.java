@@ -318,6 +318,7 @@ public class ReporteMidsService {
 		List<Map<String, Object>> registrosQuitoEletron = filtrarYSumarRegistros(registros, "QUITO", "N", "EL");
 		List<Map<String, Object>> registrosGuayaquilEletron = filtrarYSumarRegistros(registros, "GUAYAQUIL", "N", "EL");
 		List<Map<String, Object>> registrosGuayaquilMCDEB = filtrarYSumarRegistros(registros, "GUAYAQUIL", "N", "MCDEB");
+		List<Map<String, Object>> registrosGuayaquilINTER = filtrarYSumarRegistros(registros, "GUAYAQUIL", "N", "INTER");
 		List<Map<String, Object>> registrosCuentaEletron = filtrarYSumarRegistros(registros, "CUENCA", "N", "EL");
 
 		List<String> excludedKeys = Arrays.asList("");
@@ -338,6 +339,10 @@ public class ReporteMidsService {
 		inicioFilaGYE = registrosGuayaquilEletron.size() + 3;
 		tituloGYE = "MCDEBIT"; // Ejemplo de título
 		generaHoja(workbook, "GYE", registrosGuayaquilMCDEB, excludedKeys, tituloGYE, inicioFilaGYE);
+		
+		inicioFilaGYE = registrosGuayaquilEletron.size() + 3 + registrosGuayaquilMCDEB.size() + 3;
+		tituloGYE = "MCDEBIT"; // Ejemplo de título
+		generaHoja(workbook, "GYE", registrosGuayaquilINTER, excludedKeys, tituloGYE, inicioFilaGYE);
 
 		// Para agregar otro reporte en la misma hoja, calcula el inicio de la fila
 		// basándote en el último reporte
