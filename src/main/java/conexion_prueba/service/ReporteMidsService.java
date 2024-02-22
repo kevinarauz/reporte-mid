@@ -315,11 +315,17 @@ public class ReporteMidsService {
 		//List<Map<String, Object>> registros = crearDatosPruebasInteroperabilidad();
 		List<Map<String, Object>> registros = repositoryReporteMids.reporteInteroperabilidad("JMUNOZ");
 		
-		List<Map<String, Object>> registrosQuitoEletron = filtrarYSumarRegistros(registros, "QUITO", "N", "EL");
-		List<Map<String, Object>> registrosGuayaquilEletron = filtrarYSumarRegistros(registros, "GUAYAQUIL", "N", "EL");
-		List<Map<String, Object>> registrosGuayaquilMCDEB = filtrarYSumarRegistros(registros, "GUAYAQUIL", "N", "MCDEB");
-		List<Map<String, Object>> registrosGuayaquilINTER = filtrarYSumarRegistros(registros, "GUAYAQUIL", "N", "INTER");
-		List<Map<String, Object>> registrosCuentaEletron = filtrarYSumarRegistros(registros, "CUENCA", "N", "EL");
+		String tipoCom = "N";
+		
+		List<Map<String, Object>> registrosQuitoEletron = filtrarYSumarRegistros(registros, "QUITO", tipoCom, "EL");
+		List<Map<String, Object>> registrosQuitoMCDEB = filtrarYSumarRegistros(registros, "QUITO", tipoCom, "MCDEB");
+		List<Map<String, Object>> registrosQuitoINTER = filtrarYSumarRegistros(registros, "QUITO", tipoCom, "INTER");
+		List<Map<String, Object>> registrosGuayaquilEletron = filtrarYSumarRegistros(registros, "GUAYAQUIL", tipoCom, "EL");
+		List<Map<String, Object>> registrosGuayaquilMCDEB = filtrarYSumarRegistros(registros, "GUAYAQUIL", tipoCom, "MCDEB");
+		List<Map<String, Object>> registrosGuayaquilINTER = filtrarYSumarRegistros(registros, "GUAYAQUIL", tipoCom, "INTER");
+		List<Map<String, Object>> registrosCuentaEletron = filtrarYSumarRegistros(registros, "CUENCA", tipoCom, "EL");
+		List<Map<String, Object>> registrosCuentaMCDEB = filtrarYSumarRegistros(registros, "CUENCA", tipoCom, "MCDEB");
+		List<Map<String, Object>> registrosCuentaINTER = filtrarYSumarRegistros(registros, "CUENCA", tipoCom, "INTER");
 
 		List<String> excludedKeys = Arrays.asList("");
 		SXSSFWorkbook workbook = new SXSSFWorkbook();
@@ -330,6 +336,14 @@ public class ReporteMidsService {
 		int inicioFilaUIO = 0;
 		String tituloUIO = "ELECTRON";
 		generaHoja(workbook, "UIO", registrosQuitoEletron, excludedKeys, tituloUIO, inicioFilaUIO);
+		
+		inicioFilaUIO = registrosQuitoEletron.size() + 3;
+		tituloUIO = "MCDEBIT";
+		generaHoja(workbook, "UIO", registrosQuitoMCDEB, excludedKeys, tituloUIO, inicioFilaUIO);
+		
+		inicioFilaUIO = registrosQuitoEletron.size() + 3 + registrosQuitoMCDEB.size() + 3;
+		tituloUIO = "INTERDIN";
+		generaHoja(workbook, "UIO", registrosQuitoINTER, excludedKeys, tituloUIO, inicioFilaUIO);
 
 		// Al generar el reporte
 		int inicioFilaGYE = 0; // Comenzar desde la fila 0 para el primer reporte
@@ -341,7 +355,7 @@ public class ReporteMidsService {
 		generaHoja(workbook, "GYE", registrosGuayaquilMCDEB, excludedKeys, tituloGYE, inicioFilaGYE);
 		
 		inicioFilaGYE = registrosGuayaquilEletron.size() + 3 + registrosGuayaquilMCDEB.size() + 3;
-		tituloGYE = "MCDEBIT"; // Ejemplo de título
+		tituloGYE = "INTERDIN"; // Ejemplo de título
 		generaHoja(workbook, "GYE", registrosGuayaquilINTER, excludedKeys, tituloGYE, inicioFilaGYE);
 
 		// Para agregar otro reporte en la misma hoja, calcula el inicio de la fila
@@ -349,6 +363,14 @@ public class ReporteMidsService {
 		int inicioFilaCUE = 0;
 		String tituloCUE = "ELECTRON";
 		generaHoja(workbook, "CUE", registrosCuentaEletron, excludedKeys, tituloCUE, inicioFilaCUE);
+		
+		inicioFilaCUE = registrosCuentaEletron.size() + 3;
+		tituloCUE = "MCDEBIT";
+		generaHoja(workbook, "CUE", registrosCuentaMCDEB, excludedKeys, tituloCUE, inicioFilaCUE);
+		
+		inicioFilaCUE = registrosCuentaEletron.size() + 3 + registrosCuentaMCDEB.size() + 3;
+		tituloCUE = "INTERDIN";
+		generaHoja(workbook, "CUE", registrosCuentaINTER, excludedKeys, tituloCUE, inicioFilaCUE);
 
 		// Escribir a archivo
 		try (FileOutputStream outputStream = new FileOutputStream(nombreArchivo + ".xlsx")) {
