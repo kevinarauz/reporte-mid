@@ -312,12 +312,13 @@ public class ReporteMidsService {
 	}
 
 	public void reporteInteroperabilidad(String nombreArchivo) throws IOException {
-		List<Map<String, Object>> registros = crearDatosPruebasInteroperabilidad();
-		// List<Map<String, Object>> registros =
-		// repositoryReporteMids.reporteInteroperabilidad("JMUNOZ");
-		List<Map<String, Object>> registrosGuayaquil = filtrarYSumarRegistros(registros, "GUAYAQUIL", "N", "EL");
-		List<Map<String, Object>> registrosQuito = filtrarYSumarRegistros(registros, "QUITO", "N", "EL");
-		List<Map<String, Object>> registrosCuenta = filtrarYSumarRegistros(registros, "CUENCA", "N", "EL");
+		//List<Map<String, Object>> registros = crearDatosPruebasInteroperabilidad();
+		List<Map<String, Object>> registros = repositoryReporteMids.reporteInteroperabilidad("JMUNOZ");
+		
+		List<Map<String, Object>> registrosQuitoEletron = filtrarYSumarRegistros(registros, "QUITO", "N", "EL");
+		List<Map<String, Object>> registrosGuayaquilEletron = filtrarYSumarRegistros(registros, "GUAYAQUIL", "N", "EL");
+		List<Map<String, Object>> registrosGuayaquilMCDEB = filtrarYSumarRegistros(registros, "GUAYAQUIL", "N", "MCDEB");
+		List<Map<String, Object>> registrosCuentaEletron = filtrarYSumarRegistros(registros, "CUENCA", "N", "EL");
 
 		List<String> excludedKeys = Arrays.asList("");
 		SXSSFWorkbook workbook = new SXSSFWorkbook();
@@ -327,26 +328,22 @@ public class ReporteMidsService {
 
 		int inicioFilaUIO = 0;
 		String tituloUIO = "ELECTRON";
-		generaHoja(workbook, "UIO", registrosGuayaquil, excludedKeys, tituloUIO, inicioFilaUIO);
+		generaHoja(workbook, "UIO", registrosQuitoEletron, excludedKeys, tituloUIO, inicioFilaUIO);
 
 		// Al generar el reporte
 		int inicioFilaGYE = 0; // Comenzar desde la fila 0 para el primer reporte
 		String tituloGYE = "ELECTRON"; // Ejemplo de título
-		generaHoja(workbook, "GYE", registrosGuayaquil, excludedKeys, tituloGYE, inicioFilaGYE);
+		generaHoja(workbook, "GYE", registrosGuayaquilEletron, excludedKeys, tituloGYE, inicioFilaGYE);
 
-		inicioFilaGYE = registrosGuayaquil.size() + 3;
+		inicioFilaGYE = registrosGuayaquilEletron.size() + 3;
 		tituloGYE = "MCDEBIT"; // Ejemplo de título
-		generaHoja(workbook, "GYE", registrosGuayaquil, excludedKeys, tituloGYE, inicioFilaGYE);
-		
-		inicioFilaGYE = inicioFilaGYE+registrosGuayaquil.size() + 3;
-		tituloGYE = "INTERDIN"; // Ejemplo de título
-		generaHoja(workbook, "GYE", registrosGuayaquil, excludedKeys, tituloGYE, inicioFilaGYE);
+		generaHoja(workbook, "GYE", registrosGuayaquilMCDEB, excludedKeys, tituloGYE, inicioFilaGYE);
 
 		// Para agregar otro reporte en la misma hoja, calcula el inicio de la fila
 		// basándote en el último reporte
 		int inicioFilaCUE = 0;
 		String tituloCUE = "ELECTRON";
-		generaHoja(workbook, "CUE", registrosGuayaquil, excludedKeys, tituloCUE, inicioFilaCUE);
+		generaHoja(workbook, "CUE", registrosCuentaEletron, excludedKeys, tituloCUE, inicioFilaCUE);
 
 		// Escribir a archivo
 		try (FileOutputStream outputStream = new FileOutputStream(nombreArchivo + ".xlsx")) {
