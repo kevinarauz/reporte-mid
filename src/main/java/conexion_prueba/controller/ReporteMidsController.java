@@ -58,12 +58,12 @@ public class ReporteMidsController {
         }
     }
     
-    @GetMapping("/ConsultaInteroperabilidad")
-    public ResponseEntity<?> reporteInteroperabilidad() {
+    @GetMapping("/ConsultaCentrosComercialesDebit")
+    public ResponseEntity<?> reporteCentrosComercialesDebit() {
         ThreadContext.put("sid", UUID.randomUUID().toString());
-        String nombreArchivo = "Reporte Interoperabilidad - " + new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+        String nombreArchivo = "Reporte Centros Comerciales Debit - " + new SimpleDateFormat("dd-MM-yyyy").format(new Date());
         try {
-            this.reporteMidsService.reporteInteroperabilidad(nombreArchivo);
+            this.reporteMidsService.reporteCentrosComercialesDebit(nombreArchivo);
             String mensajeRespuesta = String.format("El reporte '%s.xlsx' ha sido generado exitosamente.", nombreArchivo);
             // Puedes retornar el nombre del archivo para que el cliente sepa cómo acceder a él
             Map<String, String> respuesta = new HashMap<>();
@@ -76,5 +76,22 @@ public class ReporteMidsController {
         }
     }
 
+    @GetMapping("/ConsultaCentrosComercialesNew")
+    public ResponseEntity<?> reporteCentrosComercialesNew() {
+        ThreadContext.put("sid", UUID.randomUUID().toString());
+        String nombreArchivo = "Reporte Centros Comerciales New - " + new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+        try {
+            this.reporteMidsService.reporteCentrosComercialesNew(nombreArchivo);
+            String mensajeRespuesta = String.format("El reporte '%s.xlsx' ha sido generado exitosamente.", nombreArchivo);
+            // Puedes retornar el nombre del archivo para que el cliente sepa cómo acceder a él
+            Map<String, String> respuesta = new HashMap<>();
+            respuesta.put("mensaje", mensajeRespuesta);
+            respuesta.put("nombreArchivo", nombreArchivo + ".xlsx");
+            return new ResponseEntity<>(respuesta, HttpStatus.OK);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Ocurrió un error al generar el reporte.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
     
 }

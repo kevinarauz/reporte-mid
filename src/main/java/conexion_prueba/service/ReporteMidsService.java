@@ -311,18 +311,75 @@ public class ReporteMidsService {
 		return null; // En caso de que no se pueda convertir
 	}
 
-	public void reporteInteroperabilidad(String nombreArchivo) throws IOException {
-		//List<Map<String, Object>> registros = crearDatosPruebasInteroperabilidad();
-		List<Map<String, Object>> registros = repositoryReporteMids.reporteInteroperabilidad("JMUNOZ");
-		
+	private Map<String, Object> crearRegistro(String nombre, String tipo, String zona, int subzona, int totales,
+			int mes, int anio, String com, String usuario, String activo, String banco, String regional) {
+		Map<String, Object> registro = new HashMap<>();
+		registro.put("NOMBRE", nombre);
+		registro.put("TIPO", tipo);
+		registro.put("ZONA", zona);
+		registro.put("SUBZONA", subzona);
+		registro.put("TOTALES", totales);
+		registro.put("MES", mes);
+		registro.put("ANIO", anio);
+		registro.put("COM", com);
+		registro.put("USUARIO", usuario);
+		registro.put("ACTIVO", activo);
+		registro.put("BANCO", banco);
+		registro.put("REGIONAL", regional);
+		return registro;
+	}
+
+	public List<Map<String, Object>> crearDatosPruebasCentrosComercialesNew() {
+		List<Map<String, Object>> registros = new ArrayList<>();
+		registros.add(crearRegistro("C.C. ALBAN BORJA", "VS", "G4", 1, 77000000, 1, 2024, "N", "EALFONZO", "ACT", "ALL",
+				"GUAYAQUIL"));
+		registros.add(crearRegistro("C.C. CITY MALL", "VS", "G4", 1, 155000000, 1, 2024, "N", "EALFONZO", "ACT", "ALL",
+				"GUAYAQUIL"));
+		registros.add(crearRegistro("C.C. MALL DEL SOL", "VS", "G4", 1, 250000000, 1, 2024, "N", "EALFONZO", "ACT",
+				"ALL", "GUAYAQUIL"));
+		return registros;
+	}
+
+	public void reporteCentrosComercialesNew(String nombreArchivo) throws IOException {
+		//List<Map<String, Object>> registros = crearDatosPruebasCentrosComercialesNew();
+		List<Map<String, Object>> registros = repositoryReporteMids.reporteCentrosComercialesNew("JMUNOZ");
+
 		String tipoCom = "N";
-		
+		List<Map<String, Object>> registrosGuayaquilEletron = filtrarYSumarRegistros(registros, "GUAYAQUIL", tipoCom,
+				"VS");
+
+		List<String> excludedKeys = Arrays.asList("");
+		SXSSFWorkbook workbook = new SXSSFWorkbook();
+
+		// Al generar el reporte
+		int inicioFilaGYE = 0; // Comenzar desde la fila 0 para el primer reporte
+		String tituloGYE = "VISA"; // Ejemplo de título
+		generaHoja(workbook, "GYE", registrosGuayaquilEletron, excludedKeys, tituloGYE, inicioFilaGYE);
+
+		// Escribir a archivo
+		try (FileOutputStream outputStream = new FileOutputStream(nombreArchivo + ".xlsx")) {
+			workbook.write(outputStream);
+		} finally {
+			workbook.dispose(); // Liberar recursos de SXSSFWorkbook
+		}
+	}
+
+	public void reporteCentrosComercialesDebit(String nombreArchivo) throws IOException {
+		// List<Map<String, Object>> registros = crearDatosPruebasInteroperabilidad();
+		List<Map<String, Object>> registros = repositoryReporteMids.reporteCentrosComercialesDebit("JMUNOZ");
+
+		String tipoCom = "N";
+		// String tipoCom = "S"; --reporte 2
+
 		List<Map<String, Object>> registrosQuitoEletron = filtrarYSumarRegistros(registros, "QUITO", tipoCom, "EL");
 		List<Map<String, Object>> registrosQuitoMCDEB = filtrarYSumarRegistros(registros, "QUITO", tipoCom, "MCDEB");
 		List<Map<String, Object>> registrosQuitoINTER = filtrarYSumarRegistros(registros, "QUITO", tipoCom, "INTER");
-		List<Map<String, Object>> registrosGuayaquilEletron = filtrarYSumarRegistros(registros, "GUAYAQUIL", tipoCom, "EL");
-		List<Map<String, Object>> registrosGuayaquilMCDEB = filtrarYSumarRegistros(registros, "GUAYAQUIL", tipoCom, "MCDEB");
-		List<Map<String, Object>> registrosGuayaquilINTER = filtrarYSumarRegistros(registros, "GUAYAQUIL", tipoCom, "INTER");
+		List<Map<String, Object>> registrosGuayaquilEletron = filtrarYSumarRegistros(registros, "GUAYAQUIL", tipoCom,
+				"EL");
+		List<Map<String, Object>> registrosGuayaquilMCDEB = filtrarYSumarRegistros(registros, "GUAYAQUIL", tipoCom,
+				"MCDEB");
+		List<Map<String, Object>> registrosGuayaquilINTER = filtrarYSumarRegistros(registros, "GUAYAQUIL", tipoCom,
+				"INTER");
 		List<Map<String, Object>> registrosCuentaEletron = filtrarYSumarRegistros(registros, "CUENCA", tipoCom, "EL");
 		List<Map<String, Object>> registrosCuentaMCDEB = filtrarYSumarRegistros(registros, "CUENCA", tipoCom, "MCDEB");
 		List<Map<String, Object>> registrosCuentaINTER = filtrarYSumarRegistros(registros, "CUENCA", tipoCom, "INTER");
@@ -336,11 +393,11 @@ public class ReporteMidsService {
 		int inicioFilaUIO = 0;
 		String tituloUIO = "ELECTRON";
 		generaHoja(workbook, "UIO", registrosQuitoEletron, excludedKeys, tituloUIO, inicioFilaUIO);
-		
+
 		inicioFilaUIO = registrosQuitoEletron.size() + 3;
 		tituloUIO = "MCDEBIT";
 		generaHoja(workbook, "UIO", registrosQuitoMCDEB, excludedKeys, tituloUIO, inicioFilaUIO);
-		
+
 		inicioFilaUIO = registrosQuitoEletron.size() + 3 + registrosQuitoMCDEB.size() + 3;
 		tituloUIO = "INTERDIN";
 		generaHoja(workbook, "UIO", registrosQuitoINTER, excludedKeys, tituloUIO, inicioFilaUIO);
@@ -353,7 +410,7 @@ public class ReporteMidsService {
 		inicioFilaGYE = registrosGuayaquilEletron.size() + 3;
 		tituloGYE = "MCDEBIT"; // Ejemplo de título
 		generaHoja(workbook, "GYE", registrosGuayaquilMCDEB, excludedKeys, tituloGYE, inicioFilaGYE);
-		
+
 		inicioFilaGYE = registrosGuayaquilEletron.size() + 3 + registrosGuayaquilMCDEB.size() + 3;
 		tituloGYE = "INTERDIN"; // Ejemplo de título
 		generaHoja(workbook, "GYE", registrosGuayaquilINTER, excludedKeys, tituloGYE, inicioFilaGYE);
@@ -363,11 +420,11 @@ public class ReporteMidsService {
 		int inicioFilaCUE = 0;
 		String tituloCUE = "ELECTRON";
 		generaHoja(workbook, "CUE", registrosCuentaEletron, excludedKeys, tituloCUE, inicioFilaCUE);
-		
+
 		inicioFilaCUE = registrosCuentaEletron.size() + 3;
 		tituloCUE = "MCDEBIT";
 		generaHoja(workbook, "CUE", registrosCuentaMCDEB, excludedKeys, tituloCUE, inicioFilaCUE);
-		
+
 		inicioFilaCUE = registrosCuentaEletron.size() + 3 + registrosCuentaMCDEB.size() + 3;
 		tituloCUE = "INTERDIN";
 		generaHoja(workbook, "CUE", registrosCuentaINTER, excludedKeys, tituloCUE, inicioFilaCUE);
