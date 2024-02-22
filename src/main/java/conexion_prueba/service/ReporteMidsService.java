@@ -289,7 +289,7 @@ public class ReporteMidsService {
 
 		// Agregar la fila final con el total general
 		Map<String, Object> totalGeneral = new HashMap<>();
-		totalGeneral.put("NOMBRE", "Total");
+		totalGeneral.put("NOMBRE", "TOTAL");
 		// Redondear la suma total a dos decimales
 		totalGeneral.put("TOTALES", Math.round(sumaTotal * 100.0) / 100.0);
 		resultado.add(totalGeneral);
