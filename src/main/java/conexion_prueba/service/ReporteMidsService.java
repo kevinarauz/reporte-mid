@@ -341,8 +341,8 @@ public class ReporteMidsService {
 	}
 
 	public void reporteCentrosComercialesNew(String nombreArchivo) throws IOException {
-		List<Map<String, Object>> registros = crearDatosPruebasCentrosComercialesNew();
-	    //List<Map<String, Object>> registros = repositoryReporteMids.reporteCentrosComercialesNew("JMUNOZ");
+		//List<Map<String, Object>> registros = crearDatosPruebasCentrosComercialesNew();
+	    List<Map<String, Object>> registros = repositoryReporteMids.reporteCentrosComercialesNew("JMUNOZ");
 
 	    String tipoCom = "N"; // Asumiendo que este es el filtro inicial y podría cambiar para otros reportes
 
