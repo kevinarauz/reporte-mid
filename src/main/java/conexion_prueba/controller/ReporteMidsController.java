@@ -72,7 +72,7 @@ public class ReporteMidsController {
             return new ResponseEntity<>(respuesta, HttpStatus.OK);
         } catch (IOException e) {
             e.printStackTrace();
-            return new ResponseEntity<>("Ocurrió un error al generar el reporte.", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Ocurrió un error al generar el reporte centros comerciales debit.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -90,7 +90,7 @@ public class ReporteMidsController {
             return new ResponseEntity<>(respuesta, HttpStatus.OK);
         } catch (IOException e) {
             e.printStackTrace();
-            return new ResponseEntity<>("Ocurrió un error al generar el reporte.", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Ocurrió un error al generar el reporte centros comerciales new.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     
