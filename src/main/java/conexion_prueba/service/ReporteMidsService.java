@@ -341,43 +341,52 @@ public class ReporteMidsService {
 	}
 
 	public void reporteCentrosComercialesNew(String nombreArchivo) throws IOException {
-		// List<Map<String, Object>> registros =
-		// crearDatosPruebasCentrosComercialesNew();
-		List<Map<String, Object>> registros = repositoryReporteMids.reporteCentrosComercialesNew("JMUNOZ");
+		List<Map<String, Object>> registros = crearDatosPruebasCentrosComercialesNew();
+	    //List<Map<String, Object>> registros = repositoryReporteMids.reporteCentrosComercialesNew("JMUNOZ");
 
-		String tipoCom = "N";
-		List<Map<String, Object>> registrosQuitoVisa = filtrarYSumarRegistros(registros, "GUAYAQUIL", tipoCom, "VS");
-		List<Map<String, Object>> registrosGuayaquilVisa = filtrarYSumarRegistros(registros, "GUAYAQUIL", tipoCom,
-				"VS");
-		List<Map<String, Object>> registrosCuentaVisa = filtrarYSumarRegistros(registros, "GUAYAQUIL", tipoCom, "VS");
+	    String tipoCom = "N"; // Asumiendo que este es el filtro inicial y podría cambiar para otros reportes
 
-		List<String> excludedKeys = Arrays.asList("");
-		SXSSFWorkbook workbook = new SXSSFWorkbook();
+	    // Mapa para las siglas de las ciudades
+	    Map<String, String> siglasCiudad = new HashMap<>();
+	    siglasCiudad.put("QUITO", "UIO");
+	    siglasCiudad.put("GUAYAQUIL", "GYE");
+	    siglasCiudad.put("CUENCA", "CUE");
 
-		int inicioFilaUIO = 0;
-		String tituloUIO = "VISA";
-		generaHoja(workbook, "UIO", registrosQuitoVisa, excludedKeys, tituloUIO, inicioFilaUIO);
+	    // Mapas para gestionar el inicio de fila por ciudad
+	    Map<String, Integer> inicioFilaPorCiudad = new HashMap<>();
+	    inicioFilaPorCiudad.put("QUITO", 0);
+	    inicioFilaPorCiudad.put("GUAYAQUIL", 0);
+	    inicioFilaPorCiudad.put("CUENCA", 0);
 
-		// Al generar el reporte
-		int inicioFilaGYE = 0; // Comenzar desde la fila 0 para el primer reporte
-		String tituloGYE = "VISA"; // Ejemplo de título
-		generaHoja(workbook, "GYE", registrosGuayaquilVisa, excludedKeys, tituloGYE, inicioFilaGYE);
+	    List<String> excludedKeys = Arrays.asList("");
+	    SXSSFWorkbook workbook = new SXSSFWorkbook();
 
-		// inicioFilaGYE = registrosGuayaquilEletron.size() + 3;
-		// tituloGYE = "MCDEBIT"; // Ejemplo de título
-		// generaHoja(workbook, "GYE", registrosGuayaquilMCDEB, excludedKeys, tituloGYE,
-		// inicioFilaGYE);
+	    // Usar el nombre completo de la ciudad para generarReportesPorCiudad y las siglas para el nombre de las hojas
+	    generarReportesCCNewPorCiudad("QUITO", registros, tipoCom, workbook, inicioFilaPorCiudad, excludedKeys, siglasCiudad);
+	    generarReportesCCNewPorCiudad("GUAYAQUIL", registros, tipoCom, workbook, inicioFilaPorCiudad, excludedKeys, siglasCiudad);
+	    generarReportesCCNewPorCiudad("CUENCA", registros, tipoCom, workbook, inicioFilaPorCiudad, excludedKeys, siglasCiudad);
 
-		int inicioFilaCUE = 0;
-		String tituloCUE = "VISA";
-		generaHoja(workbook, "CUE", registrosCuentaVisa, excludedKeys, tituloCUE, inicioFilaCUE);
+	    // Escribir a archivo
+	    try (FileOutputStream outputStream = new FileOutputStream(nombreArchivo + ".xlsx")) {
+	        workbook.write(outputStream);
+	    } finally {
+	        workbook.dispose(); // Liberar recursos de SXSSFWorkbook
+	    }
+	}
+	
+	private void generarReportesCCNewPorCiudad(String ciudad, List<Map<String, Object>> registros, String tipoCom,
+	        SXSSFWorkbook workbook, Map<String, Integer> inicioFilaPorCiudad, List<String> excludedKeys, Map<String, String> siglasCiudad) {
+	    String[] tiposReporte = {"VS","BG","DC","MC","DI"};
+	    String[] titulosReporte = {"VISA","AMEX","DINERS","MASTERCARD","DISCOVER"};
 
-		// Escribir a archivo
-		try (FileOutputStream outputStream = new FileOutputStream(nombreArchivo + ".xlsx")) {
-			workbook.write(outputStream);
-		} finally {
-			workbook.dispose(); // Liberar recursos de SXSSFWorkbook
-		}
+	    for (int i = 0; i < tiposReporte.length; i++) {
+	        List<Map<String, Object>> registrosFiltrados = filtrarYSumarRegistros(registros, ciudad, tipoCom, tiposReporte[i]);
+	        // Usa las siglas de la ciudad para el nombre de la hoja
+	        generaHoja(workbook, siglasCiudad.get(ciudad), registrosFiltrados, excludedKeys, titulosReporte[i], inicioFilaPorCiudad.get(ciudad));
+	        // Actualizar el contador de inicio de fila para la siguiente sección
+	        int nuevaFilaInicio = inicioFilaPorCiudad.get(ciudad) + registrosFiltrados.size() + 3; // +3 para dejar espacio
+	        inicioFilaPorCiudad.put(ciudad, nuevaFilaInicio);
+	    }
 	}
 
 	public void reporteCentrosComercialesDebit(String nombreArchivo) throws IOException {
@@ -402,9 +411,9 @@ public class ReporteMidsService {
 	    SXSSFWorkbook workbook = new SXSSFWorkbook();
 
 	    // Usar el nombre completo de la ciudad para generarReportesPorCiudad y las siglas para el nombre de las hojas
-	    generarReportesPorCiudad("QUITO", registros, tipoCom, workbook, inicioFilaPorCiudad, excludedKeys, siglasCiudad);
-	    generarReportesPorCiudad("GUAYAQUIL", registros, tipoCom, workbook, inicioFilaPorCiudad, excludedKeys, siglasCiudad);
-	    generarReportesPorCiudad("CUENCA", registros, tipoCom, workbook, inicioFilaPorCiudad, excludedKeys, siglasCiudad);
+	    generarReportesCCDEBITPorCiudad("QUITO", registros, tipoCom, workbook, inicioFilaPorCiudad, excludedKeys, siglasCiudad);
+	    generarReportesCCDEBITPorCiudad("GUAYAQUIL", registros, tipoCom, workbook, inicioFilaPorCiudad, excludedKeys, siglasCiudad);
+	    generarReportesCCDEBITPorCiudad("CUENCA", registros, tipoCom, workbook, inicioFilaPorCiudad, excludedKeys, siglasCiudad);
 
 	    // Escribir a archivo
 	    try (FileOutputStream outputStream = new FileOutputStream(nombreArchivo + ".xlsx")) {
@@ -414,7 +423,7 @@ public class ReporteMidsService {
 	    }
 	}
 
-	private void generarReportesPorCiudad(String ciudad, List<Map<String, Object>> registros, String tipoCom,
+	private void generarReportesCCDEBITPorCiudad(String ciudad, List<Map<String, Object>> registros, String tipoCom,
 	        SXSSFWorkbook workbook, Map<String, Integer> inicioFilaPorCiudad, List<String> excludedKeys, Map<String, String> siglasCiudad) {
 	    String[] tiposReporte = {"EL", "MCDEB", "INTER"};
 	    String[] titulosReporte = {"ELECTRON", "MCDEBIT", "INTERDIN"};
