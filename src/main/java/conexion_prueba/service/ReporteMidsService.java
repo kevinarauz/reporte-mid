@@ -363,9 +363,10 @@ public class ReporteMidsService {
 		String tituloGYE = "VISA"; // Ejemplo de título
 		generaHoja(workbook, "GYE", registrosGuayaquilVisa, excludedKeys, tituloGYE, inicioFilaGYE);
 
-		//inicioFilaGYE = registrosGuayaquilEletron.size() + 3;
-		//tituloGYE = "MCDEBIT"; // Ejemplo de título
-		//generaHoja(workbook, "GYE", registrosGuayaquilMCDEB, excludedKeys, tituloGYE, inicioFilaGYE);
+		// inicioFilaGYE = registrosGuayaquilEletron.size() + 3;
+		// tituloGYE = "MCDEBIT"; // Ejemplo de título
+		// generaHoja(workbook, "GYE", registrosGuayaquilMCDEB, excludedKeys, tituloGYE,
+		// inicioFilaGYE);
 
 		int inicioFilaCUE = 0;
 		String tituloCUE = "VISA";
@@ -380,47 +381,52 @@ public class ReporteMidsService {
 	}
 
 	public void reporteCentrosComercialesDebit(String nombreArchivo) throws IOException {
-		List<Map<String, Object>> registros = repositoryReporteMids.reporteCentrosComercialesDebit("JMUNOZ");
+	    List<Map<String, Object>> registros = crearDatosPruebasInteroperabilidad();
+	    // List<Map<String, Object>> registros = repositoryReporteMids.reporteCentrosComercialesDebit("JMUNOZ");
 
-		String tipoCom = "N"; // Asumiendo que este es el filtro inicial y podría cambiar para otros reportes
+	    String tipoCom = "N"; // Asumiendo que este es el filtro inicial y podría cambiar para otros reportes
 
-		// Mapas para gestionar el inicio de fila por ciudad
-		Map<String, Integer> inicioFilaPorCiudad = new HashMap<>();
-		inicioFilaPorCiudad.put("UIO", 0);
-		inicioFilaPorCiudad.put("GYE", 0);
-		inicioFilaPorCiudad.put("CUE", 0);
+	    // Mapa para las siglas de las ciudades
+	    Map<String, String> siglasCiudad = new HashMap<>();
+	    siglasCiudad.put("QUITO", "UIO");
+	    siglasCiudad.put("GUAYAQUIL", "GYE");
+	    siglasCiudad.put("CUENCA", "CUE");
 
-		List<String> excludedKeys = Arrays.asList("");
-		SXSSFWorkbook workbook = new SXSSFWorkbook();
+	    // Mapas para gestionar el inicio de fila por ciudad
+	    Map<String, Integer> inicioFilaPorCiudad = new HashMap<>();
+	    inicioFilaPorCiudad.put("QUITO", 0);
+	    inicioFilaPorCiudad.put("GUAYAQUIL", 0);
+	    inicioFilaPorCiudad.put("CUENCA", 0);
 
-		// Generar hojas por cada filtro y ciudad
-		generarReportesPorCiudad("UIO", registros, tipoCom, workbook, inicioFilaPorCiudad, excludedKeys);
-		generarReportesPorCiudad("GYE", registros, tipoCom, workbook, inicioFilaPorCiudad, excludedKeys);
-		generarReportesPorCiudad("CUE", registros, tipoCom, workbook, inicioFilaPorCiudad, excludedKeys);
+	    List<String> excludedKeys = Arrays.asList("");
+	    SXSSFWorkbook workbook = new SXSSFWorkbook();
 
-		// Escribir a archivo
-		try (FileOutputStream outputStream = new FileOutputStream(nombreArchivo + ".xlsx")) {
-			workbook.write(outputStream);
-		} finally {
-			workbook.dispose(); // Liberar recursos de SXSSFWorkbook
-		}
+	    // Usar el nombre completo de la ciudad para generarReportesPorCiudad y las siglas para el nombre de las hojas
+	    generarReportesPorCiudad("QUITO", registros, tipoCom, workbook, inicioFilaPorCiudad, excludedKeys, siglasCiudad);
+	    generarReportesPorCiudad("GUAYAQUIL", registros, tipoCom, workbook, inicioFilaPorCiudad, excludedKeys, siglasCiudad);
+	    generarReportesPorCiudad("CUENCA", registros, tipoCom, workbook, inicioFilaPorCiudad, excludedKeys, siglasCiudad);
+
+	    // Escribir a archivo
+	    try (FileOutputStream outputStream = new FileOutputStream(nombreArchivo + ".xlsx")) {
+	        workbook.write(outputStream);
+	    } finally {
+	        workbook.dispose(); // Liberar recursos de SXSSFWorkbook
+	    }
 	}
 
 	private void generarReportesPorCiudad(String ciudad, List<Map<String, Object>> registros, String tipoCom,
-			SXSSFWorkbook workbook, Map<String, Integer> inicioFilaPorCiudad, List<String> excludedKeys) {
-		String[] tiposReporte = { "EL", "MCDEB", "INTER" };
-		String[] titulosReporte = { "ELECTRON", "MCDEBIT", "INTERDIN" };
+	        SXSSFWorkbook workbook, Map<String, Integer> inicioFilaPorCiudad, List<String> excludedKeys, Map<String, String> siglasCiudad) {
+	    String[] tiposReporte = {"EL", "MCDEB", "INTER"};
+	    String[] titulosReporte = {"ELECTRON", "MCDEBIT", "INTERDIN"};
 
-		for (int i = 0; i < tiposReporte.length; i++) {
-			List<Map<String, Object>> registrosFiltrados = filtrarYSumarRegistros(registros, ciudad, tipoCom,
-					tiposReporte[i]);
-			generaHoja(workbook, ciudad, registrosFiltrados, excludedKeys, titulosReporte[i],
-					inicioFilaPorCiudad.get(ciudad));
-			// Actualizar el contador de inicio de fila para la siguiente sección
-			int nuevaFilaInicio = inicioFilaPorCiudad.get(ciudad) + registrosFiltrados.size() + 3; // +3 para dejar
-																									// espacio
-			inicioFilaPorCiudad.put(ciudad, nuevaFilaInicio);
-		}
+	    for (int i = 0; i < tiposReporte.length; i++) {
+	        List<Map<String, Object>> registrosFiltrados = filtrarYSumarRegistros(registros, ciudad, tipoCom, tiposReporte[i]);
+	        // Usa las siglas de la ciudad para el nombre de la hoja
+	        generaHoja(workbook, siglasCiudad.get(ciudad), registrosFiltrados, excludedKeys, titulosReporte[i], inicioFilaPorCiudad.get(ciudad));
+	        // Actualizar el contador de inicio de fila para la siguiente sección
+	        int nuevaFilaInicio = inicioFilaPorCiudad.get(ciudad) + registrosFiltrados.size() + 3; // +3 para dejar espacio
+	        inicioFilaPorCiudad.put(ciudad, nuevaFilaInicio);
+	    }
 	}
 
 	public void generaHoja(SXSSFWorkbook workbook, String nombreHoja, List<Map<String, Object>> registros,
