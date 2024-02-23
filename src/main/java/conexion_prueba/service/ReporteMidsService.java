@@ -363,9 +363,9 @@ public class ReporteMidsService {
 		String tituloGYE = "VISA"; // Ejemplo de título
 		generaHoja(workbook, "GYE", registrosGuayaquilVisa, excludedKeys, tituloGYE, inicioFilaGYE);
 
-		inicioFilaGYE = registrosGuayaquilEletron.size() + 3;
-		tituloGYE = "MCDEBIT"; // Ejemplo de título
-		generaHoja(workbook, "GYE", registrosGuayaquilMCDEB, excludedKeys, tituloGYE, inicioFilaGYE);
+		//inicioFilaGYE = registrosGuayaquilEletron.size() + 3;
+		//tituloGYE = "MCDEBIT"; // Ejemplo de título
+		//generaHoja(workbook, "GYE", registrosGuayaquilMCDEB, excludedKeys, tituloGYE, inicioFilaGYE);
 
 		int inicioFilaCUE = 0;
 		String tituloCUE = "VISA";
