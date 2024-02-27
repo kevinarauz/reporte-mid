@@ -678,24 +678,16 @@ public class ReporteMidsService {
 	}
 
 	private String agregarRegistroTarjeta(String nombreCC, String tipoTarjeta, List<Map<String, Object>> registrosNew, String ciudad, String com) {
-	    // Filtrar registros por ciudad, com, tipo y tipo de tarjeta
-	    //boolean existeRegistro = registrosNew.stream()
-	           //.anyMatch(registro -> nombreCC.equals(registro.get("NOMBRE").toString()) && ciudad.equals(registro.get("CIUDAD").toString()) && com.equals(registro.get("COM").toString()) && tipoTarjeta.equals(registro.get("TIPO_TARJETA").toString()));
-
-	    for (Map<String, Object> registro : registrosNew) {
-	    	if(registro.get("NOMBRE").toString().equals(nombreCC)) {
-	    		if(registro.get("COM").toString().equals(com)) {
-	    			if(registro.get("REGIONAL").toString().equals(ciudad)) {
-	    				if(registro.get("TIPO").toString().equals(tipoTarjeta)) {
-	    					return registro.get("TOTALES").toString();
-	    				}
-	    			}
-	    		}
-	    	}
-	    }
-	    return "";
-	    
+	    return registrosNew.stream()
+	            .filter(registro -> 
+	                nombreCC.equals(registro.get("NOMBRE")) &&
+	                ciudad.equals(registro.get("REGIONAL")) &&
+	                com.equals(registro.get("COM")) &&
+	                tipoTarjeta.equals(registro.get("TIPO"))
+	            )
+	            .map(registro -> registro.get("TOTALES").toString())
+	            .findFirst()
+	            .orElse(""); // Devuelve una cadena vacía si no se encuentra ningún registro
 	}
-
 	
 }
