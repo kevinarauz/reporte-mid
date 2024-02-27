@@ -650,10 +650,10 @@ public class ReporteMidsService {
 		List<Map<String, Object>> resultado = totalesPorNombre.entrySet().stream().map(entry -> {
 			Map<String, Object> map = new HashMap<>();
 			map.put("NOMBRE", entry.getKey());
-			try {
-				map.put("TARJETA", agregarRegistroTarjeta(map.get("NOMBRE").toString(), "VS", registrosNew, ciudad, com, tipo));
-			}catch(Exception e) {
-				e.printStackTrace();
+			if(tipo.equals("MCDEB")) {
+				map.put("TARJETA", agregarRegistroTarjeta(map.get("NOMBRE").toString(), "MC", registrosNew, ciudad, com));
+			}else {
+				map.put("TARJETA", agregarRegistroTarjeta(map.get("NOMBRE").toString(), "VS", registrosNew, ciudad, com));
 			}
 			map.put("TOTALES", entry.getValue());
 			
@@ -677,7 +677,7 @@ public class ReporteMidsService {
 	    return null; // O manejar según sea necesario
 	}
 
-	private String agregarRegistroTarjeta(String nombreCC, String tipoTarjeta, List<Map<String, Object>> registrosNew, String ciudad, String com, String tipo) {
+	private String agregarRegistroTarjeta(String nombreCC, String tipoTarjeta, List<Map<String, Object>> registrosNew, String ciudad, String com) {
 	    // Filtrar registros por ciudad, com, tipo y tipo de tarjeta
 	    //boolean existeRegistro = registrosNew.stream()
 	           //.anyMatch(registro -> nombreCC.equals(registro.get("NOMBRE").toString()) && ciudad.equals(registro.get("CIUDAD").toString()) && com.equals(registro.get("COM").toString()) && tipoTarjeta.equals(registro.get("TIPO_TARJETA").toString()));
