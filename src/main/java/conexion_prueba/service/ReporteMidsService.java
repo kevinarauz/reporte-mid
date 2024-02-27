@@ -650,7 +650,9 @@ public class ReporteMidsService {
 		List<Map<String, Object>> resultado = totalesPorNombre.entrySet().stream().map(entry -> {
 			Map<String, Object> map = new HashMap<>();
 			map.put("NOMBRE", entry.getKey());
+			map.put("TARJETA", agregarRegistroTarjeta((String)entry.getKey(), "VS", registrosNew, ciudad, com, tipo));
 			map.put("TOTALES", entry.getValue());
+			
 			return map;
 		}).collect(Collectors.toList());
 
