@@ -687,7 +687,7 @@ public class ReporteMidsService {
 	                com.equals(registro.get("COM")) &&
 	                tipoTarjeta.equals(registro.get("TIPO"))
 	            )
-	            .map(registro -> ""+obtenerDoubleDeObjeto(registro.get("TOTALES")))
+	            .map(registro -> String.format("%.2f", obtenerDoubleDeObjeto(registro.get("TOTALES"))))
 	            .findFirst()
 	            .orElse(""); // Devuelve una cadena vacía si no se encuentra ningún registro
 	}
