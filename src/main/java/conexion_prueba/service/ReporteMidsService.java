@@ -660,6 +660,8 @@ public class ReporteMidsService {
 			return map;
 		}).collect(Collectors.toList());
 
+		resultado.sort((o1, o2) -> ((String) o1.get("NOMBRE")).compareTo((String) o2.get("NOMBRE")));
+		
 		// Agregar la fila final con el total general
 		Map<String, Object> totalGeneral = new HashMap<>();
 		totalGeneral.put("NOMBRE", "TOTAL");
