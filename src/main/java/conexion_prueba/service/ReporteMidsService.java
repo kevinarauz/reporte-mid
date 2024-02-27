@@ -681,21 +681,13 @@ public class ReporteMidsService {
 
 	private String agregarRegistroTarjeta(String nombreCC, String tipoTarjeta, List<Map<String, Object>> registrosNew, String ciudad, String com) {
 	    return registrosNew.stream()
-	            .filter(registro ->
+	            .filter(registro -> 
 	                nombreCC.equals(registro.get("NOMBRE")) &&
 	                ciudad.equals(registro.get("REGIONAL")) &&
 	                com.equals(registro.get("COM")) &&
 	                tipoTarjeta.equals(registro.get("TIPO"))
 	            )
-	            .map(registro -> {
-	                Object totalObj = registro.get("TOTALES");
-	                if (totalObj instanceof Number) {
-	                    return String.format("%.2f", ((Number) totalObj).doubleValue());
-	                } else {
-	                    // Manejar el caso en que "TOTALES" no es un número, devolver "0.00" o manejarlo según sea necesario
-	                    return "0.00";
-	                }
-	            })
+	            .map(registro -> ""+obtenerDoubleDeObjeto(registro.get("TOTALES")))
 	            .findFirst()
 	            .orElse(""); // Devuelve una cadena vacía si no se encuentra ningún registro
 	}
