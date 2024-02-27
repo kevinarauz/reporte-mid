@@ -340,6 +340,7 @@ public class ReporteMidsService {
 		return registros;
 	}
 
+	//Reporte tarjetas "VS","BG","DC","MC","DI"
 	public void reporteCentrosComercialesNew(String nombreArchivo) throws IOException {
 		//List<Map<String, Object>> registros = crearDatosPruebasCentrosComercialesNew();
 	    List<Map<String, Object>> registros = repositoryReporteMids.reporteCentrosComercialesNew("JMUNOZ");
@@ -382,7 +383,7 @@ public class ReporteMidsService {
 	    for (int i = 0; i < tiposReporte.length; i++) {
 	        List<Map<String, Object>> registrosFiltrados = filtrarYSumarRegistros(registros, ciudad, tipoCom, tiposReporte[i]);
 	        // Usa las siglas de la ciudad para el nombre de la hoja
-	        generaHoja(workbook, siglasCiudad.get(ciudad), registrosFiltrados, excludedKeys, titulosReporte[i], inicioFilaPorCiudad.get(ciudad));
+	        //generaHoja(workbook, siglasCiudad.get(ciudad), registrosFiltrados, excludedKeys, titulosReporte[i], inicioFilaPorCiudad.get(ciudad));
 	        // Actualizar el contador de inicio de fila para la siguiente sección
 	        int nuevaFilaInicio = inicioFilaPorCiudad.get(ciudad) + registrosFiltrados.size() + 3; // +3 para dejar espacio
 	        inicioFilaPorCiudad.put(ciudad, nuevaFilaInicio);
@@ -550,6 +551,124 @@ public class ReporteMidsService {
 
 		}
 
+	}
+	
+	public void generarReportesUnificados(String nombreArchivo) throws IOException {
+		//List<Map<String, Object>> registros = crearDatosPruebasInteroperabilidad();
+	    List<Map<String, Object>> registrosDebit = repositoryReporteMids.reporteCentrosComercialesDebit("JMUNOZ");
+	  //List<Map<String, Object>> registros = crearDatosPruebasCentrosComercialesNew();
+	    List<Map<String, Object>> registrosNew = repositoryReporteMids.reporteCentrosComercialesNew("JMUNOZ");
+
+	    String tipoCom = "N"; // Asumiendo que este es el filtro inicial y podría cambiar para otros reportes
+
+	    // Mapa para las siglas de las ciudades
+	    Map<String, String> siglasCiudad = new HashMap<>();
+	    siglasCiudad.put("QUITO", "UIO");
+	    siglasCiudad.put("GUAYAQUIL", "GYE");
+	    siglasCiudad.put("CUENCA", "CUE");
+
+	    // Mapas para gestionar el inicio de fila por ciudad
+	    Map<String, Integer> inicioFilaPorCiudad = new HashMap<>();
+	    inicioFilaPorCiudad.put("QUITO", 0);
+	    inicioFilaPorCiudad.put("GUAYAQUIL", 0);
+	    inicioFilaPorCiudad.put("CUENCA", 0);
+
+	    List<String> excludedKeys = Arrays.asList("");
+	    SXSSFWorkbook workbook = new SXSSFWorkbook();
+
+	    // Usar el nombre completo de la ciudad para generarReportesPorCiudad y las siglas para el nombre de las hojas
+	    generarReportesCCDEBITNewPorCiudad("QUITO", registrosDebit,registrosNew, tipoCom, workbook, inicioFilaPorCiudad, excludedKeys, siglasCiudad);
+	    generarReportesCCDEBITNewPorCiudad("GUAYAQUIL", registrosDebit,registrosNew, tipoCom, workbook, inicioFilaPorCiudad, excludedKeys, siglasCiudad);
+	    generarReportesCCDEBITNewPorCiudad("CUENCA", registrosDebit,registrosNew, tipoCom, workbook, inicioFilaPorCiudad, excludedKeys, siglasCiudad);
+
+	    // Escribir a archivo
+	    try (FileOutputStream outputStream = new FileOutputStream(nombreArchivo + ".xlsx")) {
+	        workbook.write(outputStream);
+	    } finally {
+	        workbook.dispose(); // Liberar recursos de SXSSFWorkbook
+	    }
+	}
+	
+	private void generarReportesCCDEBITNewPorCiudad(String ciudad, List<Map<String, Object>> registros,List<Map<String, Object>> registrosNew, String tipoCom,
+	        SXSSFWorkbook workbook, Map<String, Integer> inicioFilaPorCiudad, List<String> excludedKeys, Map<String, String> siglasCiudad) {
+	    String[] tiposReporte = {"EL", "MCDEB", "INTER"};
+	    String[] titulosReporte = {"ELECTRON", "MCDEBIT", "INTERDIN"};
+
+	    for (int i = 0; i < tiposReporte.length; i++) {
+	        List<Map<String, Object>> registrosFiltrados = filtrarYSumarRegistrosNewDebit(registros,registrosNew, ciudad, tipoCom, tiposReporte[i]);
+	        // Usa las siglas de la ciudad para el nombre de la hoja
+	        generaHoja(workbook, siglasCiudad.get(ciudad), registrosFiltrados, excludedKeys, titulosReporte[i], inicioFilaPorCiudad.get(ciudad));
+	        // Actualizar el contador de inicio de fila para la siguiente sección
+	        int nuevaFilaInicio = inicioFilaPorCiudad.get(ciudad) + registrosFiltrados.size() + 3; // +3 para dejar espacio
+	        inicioFilaPorCiudad.put(ciudad, nuevaFilaInicio);
+	    }
+	}
+	
+	public List<Map<String, Object>> filtrarYSumarRegistrosNewDebit(List<Map<String, Object>> registros,List<Map<String, Object>>registrosNew, String ciudad, String com, String tipo) {
+		nombresPermitidos = new HashSet<>();
+		// Filtro basado en los parámetros proporcionados y nombres permitidos
+		switch (ciudad) {
+		case "GUAYAQUIL":
+			nombresPermitidos = nombresPermitidosGuayaquil;
+			break;
+		case "QUITO":
+			nombresPermitidos = nombresPermitidosQuito;
+			break;
+		case "CUENCA":
+			nombresPermitidos = nombresPermitidosCuenca;
+			break;
+		}
+
+		List<Map<String, Object>> registrosFiltrados = registros.stream()
+				.filter(registro -> nombresPermitidos.contains(registro.get("NOMBRE"))
+						&& ciudad.equals(registro.get("REGIONAL")) && com.equals(registro.get("COM"))
+						&& tipo.equals(registro.get("TIPO")))
+				.collect(Collectors.toList());
+		
+		List<Map<String, Object>> listaFinal = new ArrayList<>();
+		for (Map<String, Object> registro : registrosFiltrados) {
+			Map<String, Object> registroNew = new HashMap<>();
+			registroNew.put("NOMBRE", registro.get("NOMBRE"));
+			//registroNew.put("TARJETA", agregarRegistroTargeta("GUAYAQUIL", registrosDebit,registrosNew, tipoCom, workbook, inicioFilaPorCiudad, excludedKeys, siglasCiudad));//aqui quiero agregar la columna q falta
+			//registroNew.put("TARJETA", agregarRegistroTargeta("VS",registrosNew,ciudad,com,tipo));
+			listaFinal.add(registroNew);
+		}
+		registrosFiltrados = listaFinal;
+		Map<String, Double> totalesPorNombre = new HashMap<>();
+		double sumaTotal = 0.0;
+		for (Map<String, Object> registro : registrosFiltrados) {
+			Double total = obtenerDoubleDeObjeto(registro.get("TOTALES"));
+			if (total != null) {
+				// Redondear a dos decimales
+				total = Math.round(total * 100.0) / 100.0;
+				totalesPorNombre.merge((String) registro.get("NOMBRE"), total, Double::sum);
+				sumaTotal += total;
+			}
+		}
+
+		// Convertir los totales en una lista de mapas para el resultado deseado
+		List<Map<String, Object>> resultado = totalesPorNombre.entrySet().stream().map(entry -> {
+			Map<String, Object> map = new HashMap<>();
+			map.put("NOMBRE", entry.getKey());
+			map.put("TOTALES", entry.getValue());
+			return map;
+		}).collect(Collectors.toList());
+
+		// Agregar la fila final con el total general
+		Map<String, Object> totalGeneral = new HashMap<>();
+		totalGeneral.put("NOMBRE", "TOTAL");
+		// Redondear la suma total a dos decimales
+		totalGeneral.put("TOTALES", Math.round(sumaTotal * 100.0) / 100.0);
+		resultado.add(totalGeneral);
+
+		return resultado;
+	}
+
+	private Double obtenerDoubleDeObjetoNew(Object obj) {
+	    if (obj instanceof Number) {
+	        return ((Number) obj).doubleValue();
+	    }
+	    return null; // O manejar según sea necesario
 	}
 
 }

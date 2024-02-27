@@ -94,4 +94,22 @@ public class ReporteMidsController {
         }
     }
     
+    @GetMapping("/ConsultaCentrosComerciales")
+    public ResponseEntity<?> reporteCentrosComerciales() {
+        ThreadContext.put("sid", UUID.randomUUID().toString());
+        String nombreArchivo = "Reporte Centros Comerciales New - " + new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+        try {
+            this.reporteMidsService.generarReportesUnificados(nombreArchivo);
+            String mensajeRespuesta = String.format("El reporte '%s.xlsx' ha sido generado exitosamente.", nombreArchivo);
+            // Puedes retornar el nombre del archivo para que el cliente sepa cómo acceder a él
+            Map<String, String> respuesta = new HashMap<>();
+            respuesta.put("mensaje", mensajeRespuesta);
+            respuesta.put("nombreArchivo", nombreArchivo + ".xlsx");
+            return new ResponseEntity<>(respuesta, HttpStatus.OK);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Ocurrió un error al generar el reporte centros comerciales new.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
 }
