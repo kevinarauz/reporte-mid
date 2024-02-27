@@ -182,7 +182,7 @@ public class ReporteMidsService {
 		registro3.put("USUARIO", "MRAMOS");
 		registro3.put("ACTIVO", "INACT");
 		registro3.put("BANCO", "ALL");
-		registro3.put("REGIONAL", "CUENCA");
+		registro3.put("REGIONAL", "GUAYAQUIL");
 		listaRegistros.add(registro3);
 
 		// Registro para Guayaquil
@@ -333,7 +333,7 @@ public class ReporteMidsService {
 		List<Map<String, Object>> registros = new ArrayList<>();
 		registros.add(crearRegistro("C.C. ALBAN BORJA", "VS", "G4", 1, 77000000, 1, 2024, "N", "EALFONZO", "ACT", "ALL",
 				"GUAYAQUIL"));
-		registros.add(crearRegistro("C.C. CITY MALL", "VS", "G4", 1, 155000000, 1, 2024, "N", "EALFONZO", "ACT", "ALL",
+		registros.add(crearRegistro("C.C. SAN MARINO", "VS", "G4", 1, 155000000, 1, 2024, "N", "EALFONZO", "ACT", "ALL",
 				"GUAYAQUIL"));
 		registros.add(crearRegistro("C.C. MALL DEL SOL", "VS", "G4", 1, 250000000, 1, 2024, "N", "EALFONZO", "ACT",
 				"ALL", "GUAYAQUIL"));
@@ -650,7 +650,11 @@ public class ReporteMidsService {
 		List<Map<String, Object>> resultado = totalesPorNombre.entrySet().stream().map(entry -> {
 			Map<String, Object> map = new HashMap<>();
 			map.put("NOMBRE", entry.getKey());
-			map.put("TARJETA", agregarRegistroTarjeta(map.get("NOMBRE").toString(), "VS", registrosNew, ciudad, com, tipo));
+			try {
+				map.put("TARJETA", agregarRegistroTarjeta(map.get("NOMBRE").toString(), "VS", registrosNew, ciudad, com, tipo));
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
 			map.put("TOTALES", entry.getValue());
 			
 			return map;
@@ -675,15 +679,22 @@ public class ReporteMidsService {
 
 	private String agregarRegistroTarjeta(String nombreCC, String tipoTarjeta, List<Map<String, Object>> registrosNew, String ciudad, String com, String tipo) {
 	    // Filtrar registros por ciudad, com, tipo y tipo de tarjeta
-	    boolean existeRegistro = registrosNew.stream()
-	            .anyMatch(registro -> nombreCC.equals(registro.get("NOMBRE")) && ciudad.equals(registro.get("CIUDAD")) && com.equals(registro.get("COM")) && tipoTarjeta.equals(registro.get("TIPO_TARJETA")));
+	    //boolean existeRegistro = registrosNew.stream()
+	           //.anyMatch(registro -> nombreCC.equals(registro.get("NOMBRE").toString()) && ciudad.equals(registro.get("CIUDAD").toString()) && com.equals(registro.get("COM").toString()) && tipoTarjeta.equals(registro.get("TIPO_TARJETA").toString()));
 
-	    // Retornar el tipo de tarjeta si existe al menos un registro que cumpla con los criterios
-	    if (existeRegistro) {
-	        return tipoTarjeta;
-	    } else {
-	        return null; // O manejar de otra manera si no se encuentra ningún registro
+	    for (Map<String, Object> registro : registrosNew) {
+	    	if(registro.get("NOMBRE").toString().equals(nombreCC)) {
+	    		if(registro.get("COM").toString().equals(com)) {
+	    			if(registro.get("REGIONAL").toString().equals(ciudad)) {
+	    				if(registro.get("TIPO").toString().equals(tipoTarjeta)) {
+	    					return registro.get("TOTALES").toString();
+	    				}
+	    			}
+	    		}
+	    	}
 	    }
+	    return "";
+	    
 	}
 
 	
