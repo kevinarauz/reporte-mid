@@ -630,7 +630,7 @@ public class ReporteMidsService {
 			Map<String, Object> registroNew = new HashMap<>();
 			registroNew.put("NOMBRE", registro.get("NOMBRE"));
 			//registroNew.put("TARJETA", agregarRegistroTargeta("GUAYAQUIL", registrosDebit,registrosNew, tipoCom, workbook, inicioFilaPorCiudad, excludedKeys, siglasCiudad));//aqui quiero agregar la columna q falta
-			//registroNew.put("TARJETA", agregarRegistroTargeta("VS",registrosNew,ciudad,com,tipo));
+			registroNew.put("TARJETA", agregarRegistroTarjeta((String)registro.get("NOMBRE"), "VS", registrosNew, ciudad, com, tipo));
 			listaFinal.add(registroNew);
 		}
 		registrosFiltrados = listaFinal;
@@ -671,4 +671,18 @@ public class ReporteMidsService {
 	    return null; // O manejar según sea necesario
 	}
 
+	private String agregarRegistroTarjeta(String nombreCC, String tipoTarjeta, List<Map<String, Object>> registrosNew, String ciudad, String com, String tipo) {
+	    // Filtrar registros por ciudad, com, tipo y tipo de tarjeta
+	    boolean existeRegistro = registrosNew.stream()
+	            .anyMatch(registro -> nombreCC.equals(registro.get("NOMBRE")) && ciudad.equals(registro.get("CIUDAD")) && com.equals(registro.get("COM")) && tipoTarjeta.equals(registro.get("TIPO_TARJETA")));
+
+	    // Retornar el tipo de tarjeta si existe al menos un registro que cumpla con los criterios
+	    if (existeRegistro) {
+	        return tipoTarjeta;
+	    } else {
+	        return null; // O manejar de otra manera si no se encuentra ningún registro
+	    }
+	}
+
+	
 }
