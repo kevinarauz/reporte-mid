@@ -554,10 +554,10 @@ public class ReporteMidsService {
 	}
 	
 	public void generarReportesUnificados(String nombreArchivo) throws IOException {
-		List<Map<String, Object>> registrosDebit = crearDatosPruebasInteroperabilidad();
-	    //List<Map<String, Object>> registrosDebit = repositoryReporteMids.reporteCentrosComercialesDebit("JMUNOZ");
-		List<Map<String, Object>> registrosNew = crearDatosPruebasCentrosComercialesNew();
-	    //List<Map<String, Object>> registrosNew = repositoryReporteMids.reporteCentrosComercialesNew("JMUNOZ");
+		//List<Map<String, Object>> registrosDebit = crearDatosPruebasInteroperabilidad();
+	    List<Map<String, Object>> registrosDebit = repositoryReporteMids.reporteCentrosComercialesDebit("JMUNOZ");
+		//List<Map<String, Object>> registrosNew = crearDatosPruebasCentrosComercialesNew();
+	    List<Map<String, Object>> registrosNew = repositoryReporteMids.reporteCentrosComercialesNew("JMUNOZ");
 
 	    String tipoCom = "N"; // Asumiendo que este es el filtro inicial y podría cambiar para otros reportes
 
