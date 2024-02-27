@@ -554,10 +554,10 @@ public class ReporteMidsService {
 	}
 	
 	public void generarReportesUnificados(String nombreArchivo) throws IOException {
-		//List<Map<String, Object>> registros = crearDatosPruebasInteroperabilidad();
-	    List<Map<String, Object>> registrosDebit = repositoryReporteMids.reporteCentrosComercialesDebit("JMUNOZ");
-	  //List<Map<String, Object>> registros = crearDatosPruebasCentrosComercialesNew();
-	    List<Map<String, Object>> registrosNew = repositoryReporteMids.reporteCentrosComercialesNew("JMUNOZ");
+		List<Map<String, Object>> registrosDebit = crearDatosPruebasInteroperabilidad();
+	    //List<Map<String, Object>> registrosDebit = repositoryReporteMids.reporteCentrosComercialesDebit("JMUNOZ");
+		List<Map<String, Object>> registrosNew = crearDatosPruebasCentrosComercialesNew();
+	    //List<Map<String, Object>> registrosNew = repositoryReporteMids.reporteCentrosComercialesNew("JMUNOZ");
 
 	    String tipoCom = "N"; // Asumiendo que este es el filtro inicial y podría cambiar para otros reportes
 
@@ -650,7 +650,7 @@ public class ReporteMidsService {
 		List<Map<String, Object>> resultado = totalesPorNombre.entrySet().stream().map(entry -> {
 			Map<String, Object> map = new HashMap<>();
 			map.put("NOMBRE", entry.getKey());
-			map.put("TARJETA", agregarRegistroTarjeta((String)entry.getKey(), "VS", registrosNew, ciudad, com, tipo));
+			map.put("TARJETA", agregarRegistroTarjeta(map.get("NOMBRE").toString(), "VS", registrosNew, ciudad, com, tipo));
 			map.put("TOTALES", entry.getValue());
 			
 			return map;
