@@ -554,10 +554,10 @@ public class ReporteMidsService {
 	}
 	
 	public void generarReportesUnificados(String nombreArchivo) throws IOException {
-		//List<Map<String, Object>> registrosDebit = crearDatosPruebasInteroperabilidad();
-	    List<Map<String, Object>> registrosDebit = repositoryReporteMids.reporteCentrosComercialesDebit("JMUNOZ");
-		//List<Map<String, Object>> registrosNew = crearDatosPruebasCentrosComercialesNew();
-	    List<Map<String, Object>> registrosNew = repositoryReporteMids.reporteCentrosComercialesNew("JMUNOZ");
+		List<Map<String, Object>> registrosDebit = crearDatosPruebasInteroperabilidad();
+	    //List<Map<String, Object>> registrosDebit = repositoryReporteMids.reporteCentrosComercialesDebit("JMUNOZ");
+		List<Map<String, Object>> registrosNew = crearDatosPruebasCentrosComercialesNew();
+	    //List<Map<String, Object>> registrosNew = repositoryReporteMids.reporteCentrosComercialesNew("JMUNOZ");
 
 	    String tipoCom = "N"; // Asumiendo que este es el filtro inicial y podría cambiar para otros reportes
 
@@ -604,6 +604,9 @@ public class ReporteMidsService {
 	    }
 	}
 	
+	private Double sumaTotalTarjeta;
+	private Double sumaTotalNombre;
+	
 	public List<Map<String, Object>> filtrarYSumarRegistrosNewDebit(List<Map<String, Object>> registros,List<Map<String, Object>>registrosNew, String ciudad, String com, String tipo) {
 		nombresPermitidos = new HashSet<>();
 		// Filtro basado en los parámetros proporcionados y nombres permitidos
@@ -637,19 +640,21 @@ public class ReporteMidsService {
 			}
 		}
 
+		sumaTotalTarjeta = 0.0;
+		sumaTotalNombre = 0.0;
+		
 		// Convertir los totales en una lista de mapas para el resultado deseado
 		List<Map<String, Object>> resultado = totalesPorNombre.entrySet().stream().map(entry -> {
-			Map<String, Object> map = new HashMap<>();
-			map.put("NOMBRE", entry.getKey());
-			if(tipo.equals("MCDEB")) {
-				map.put("TARJETA", agregarRegistroTarjeta(map.get("NOMBRE").toString(), "MC", registrosNew, ciudad, com));
-			}else {
-				map.put("TARJETA", agregarRegistroTarjeta(map.get("NOMBRE").toString(), "VS", registrosNew, ciudad, com));
-			}
-			map.put("TOTALES", entry.getValue());
-			
-			return map;
-		}).collect(Collectors.toList());
+            Map<String, Object> map = new HashMap<>();
+            Double totalNombre = obtenerDoubleDeObjetoNew(entry.getValue());
+            Double totalTarjeta = agregarRegistroTarjeta(entry.getKey(), tipo.equals("MCDEB") ? "MC" : "VS", registrosNew, ciudad, com);
+            map.put("NOMBRE", entry.getKey());
+            map.put("TARJETA", totalTarjeta);
+            map.put("TOTALES", entry.getValue());
+            sumaTotalNombre = sumaTotalNombre + totalNombre;
+            sumaTotalTarjeta = sumaTotalTarjeta + totalTarjeta;
+            return map;
+        }).collect(Collectors.toList());
 
 		resultado.sort((o1, o2) -> ((String) o1.get("NOMBRE")).compareTo((String) o2.get("NOMBRE")));
 		
@@ -657,7 +662,8 @@ public class ReporteMidsService {
 		Map<String, Object> totalGeneral = new HashMap<>();
 		totalGeneral.put("NOMBRE", "TOTAL");
 		// Redondear la suma total a dos decimales
-		totalGeneral.put("TOTALES", Math.round(sumaTotal * 100.0) / 100.0);
+		totalGeneral.put("TARJETA", Math.round(sumaTotalTarjeta * 100.0) / 100.0);
+		totalGeneral.put("TOTALES", Math.round(sumaTotalNombre * 100.0) / 100.0);
 		resultado.add(totalGeneral);
 
 		return resultado;
@@ -670,17 +676,16 @@ public class ReporteMidsService {
 	    return null; // O manejar según sea necesario
 	}
 
-	private String agregarRegistroTarjeta(String nombreCC, String tipoTarjeta, List<Map<String, Object>> registrosNew, String ciudad, String com) {
-	    return registrosNew.stream()
-	            .filter(registro -> 
-	                nombreCC.equals(registro.get("NOMBRE")) &&
-	                ciudad.equals(registro.get("REGIONAL")) &&
-	                com.equals(registro.get("COM")) &&
-	                tipoTarjeta.equals(registro.get("TIPO"))
-	            )
-	            .map(registro -> String.format("%.2f", obtenerDoubleDeObjeto(registro.get("TOTALES"))))
-	            .findFirst()
-	            .orElse(""); // Devuelve una cadena vacía si no se encuentra ningún registro
-	}
+	private Double agregarRegistroTarjeta(String nombreCC, String tipoTarjeta, List<Map<String, Object>> registrosNew, String ciudad, String com) {
+        return registrosNew.stream()
+                .filter(registro ->
+                        nombreCC.equals(registro.get("NOMBRE")) &&
+                        ciudad.equals(registro.get("REGIONAL")) &&
+                        com.equals(registro.get("COM")) &&
+                        tipoTarjeta.equals(registro.get("TIPO")))
+                .map(registro -> obtenerDoubleDeObjetoNew(registro.get("TOTALES")))
+                .findFirst()
+                .orElse(0.0); // Devuelve 0.0 si no se encuentra ningún registro
+    }
 	
 }
