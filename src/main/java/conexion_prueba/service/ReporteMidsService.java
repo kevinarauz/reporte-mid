@@ -625,15 +625,6 @@ public class ReporteMidsService {
 						&& tipo.equals(registro.get("TIPO")))
 				.collect(Collectors.toList());
 		
-		/*List<Map<String, Object>> listaFinal = new ArrayList<>();
-		for (Map<String, Object> registro : registrosFiltrados) {
-			Map<String, Object> registroNew = new HashMap<>();
-			registroNew.put("NOMBRE", registro.get("NOMBRE"));
-			//registroNew.put("TARJETA", agregarRegistroTargeta("GUAYAQUIL", registrosDebit,registrosNew, tipoCom, workbook, inicioFilaPorCiudad, excludedKeys, siglasCiudad));//aqui quiero agregar la columna q falta
-			registroNew.put("TARJETA", agregarRegistroTarjeta((String)registro.get("NOMBRE"), "VS", registrosNew, ciudad, com, tipo));
-			listaFinal.add(registroNew);
-		}
-		registrosFiltrados = listaFinal;*/
 		Map<String, Double> totalesPorNombre = new HashMap<>();
 		double sumaTotal = 0.0;
 		for (Map<String, Object> registro : registrosFiltrados) {
