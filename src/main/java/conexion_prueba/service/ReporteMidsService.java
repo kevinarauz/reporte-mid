@@ -697,10 +697,12 @@ public class ReporteMidsService {
 	}
 
 	private Double obtenerDoubleDeObjetoNew(Object obj) {
-		if (obj instanceof Number) {
-			return ((Number) obj).doubleValue();
-		}
-		return null; // O manejar según sea necesario
+	    try {
+	        return Double.parseDouble(obj.toString());
+	    } catch (NumberFormatException e) {
+	    	log.debug(obj.toString());
+	        return 0.0;
+	    }
 	}
 
 	private Double agregarRegistroTarjeta(String nombreCC, String tipoTarjeta, List<Map<String, Object>> registrosNew,
