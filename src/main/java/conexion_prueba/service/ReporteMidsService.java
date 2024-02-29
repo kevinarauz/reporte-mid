@@ -706,6 +706,10 @@ public class ReporteMidsService {
 
         resultado.addAll(nombresFaltantes);
 		
+        resultado = resultado.stream()
+                .filter(map -> !(map.get("TARJETA").equals(0.0) && map.get("TOTALES").equals(0.0)))
+                .collect(Collectors.toList());
+        
 		resultado.sort((o1, o2) -> ((String) o1.get("NOMBRE")).compareTo((String) o2.get("NOMBRE")));
 
 		// Agregar la fila final con el total general
