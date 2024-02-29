@@ -684,6 +684,26 @@ public class ReporteMidsService {
 			return map;
 		}).collect(Collectors.toList());
 
+		// Agregar nombres permitidos que no están en 'resultado'
+        Set<String> nombresIncluidos = resultado.stream()
+                .map(map -> (String) map.get("NOMBRE"))
+                .collect(Collectors.toSet());
+
+        List<Map<String, Object>> nombresFaltantes = nombresPermitidos.stream()
+                .filter(nombre -> !nombresIncluidos.contains(nombre))
+                .map(nombre -> {
+                    Map<String, Object> map = new LinkedHashMap<>();
+                    Double totalTarjeta = agregarRegistroTarjeta(nombre, tipo.equals("MCDEB") ? "MC" : "VS", registrosNew, ciudad, com);
+                    map.put("NOMBRE", nombre);
+                    map.put("TARJETA", totalTarjeta);
+                    map.put("TOTALES", 0.00);
+                    sumaTotalTarjeta += totalTarjeta;
+                    return map;
+                })
+                .collect(Collectors.toList());
+
+        resultado.addAll(nombresFaltantes);
+		
 		resultado.sort((o1, o2) -> ((String) o1.get("NOMBRE")).compareTo((String) o2.get("NOMBRE")));
 
 		// Agregar la fila final con el total general
@@ -700,7 +720,7 @@ public class ReporteMidsService {
 	    try {
 	        return Double.parseDouble(obj.toString());
 	    } catch (NumberFormatException e) {
-	    	log.debug(obj.toString());
+	    	log.error("Error: "+obj.toString());
 	        return 0.0;
 	    }
 	}
