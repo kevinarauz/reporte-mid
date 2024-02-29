@@ -650,9 +650,10 @@ public class ReporteMidsService {
 		}
 
 		List<Map<String, Object>> registrosFiltrados = registros.stream()
-		        .filter(registro -> nombresPermitidos.contains(registro.get("NOMBRE").toString().trim())
-		                && ciudad.equals(registro.get("REGIONAL").toString().trim()) && com.equals(registro.get("COM").toString().trim())
-		                && tipo.equals(registro.get("TIPO").toString().trim()))
+		        .filter(registro -> nombresPermitidos.contains(registro.get("NOMBRE").toString().replaceAll("\\s+$", ""))
+		                && ciudad.equals(registro.get("REGIONAL").toString().replaceAll("\\s+$", ""))
+		                && com.equals(registro.get("COM").toString().replaceAll("\\s+$", ""))
+		                && tipo.equals(registro.get("TIPO").toString().replaceAll("\\s+$", "")))
 		        .collect(Collectors.toList());
 
 		Map<String, Double> totalesPorNombre = new HashMap<>();
