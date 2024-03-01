@@ -112,4 +112,21 @@ public class ReporteMidsController {
         }
     }
     
+    @GetMapping("/ConsultaExcel")
+    public ResponseEntity<?> procesarExcel() {
+        ThreadContext.put("sid", UUID.randomUUID().toString());
+        String nombreArchivo = "Consulta Excel New - " + new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+        try {
+            this.reporteMidsService.procesarReporte();
+            String mensajeRespuesta = String.format("El reporte '%s.xlsx' ha sido generado exitosamente.", nombreArchivo);
+            Map<String, String> respuesta = new HashMap<>();
+            respuesta.put("mensaje", mensajeRespuesta);
+            respuesta.put("nombreArchivo", nombreArchivo + ".xlsx");
+            return new ResponseEntity<>(respuesta, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Ocurrió un error al generar el reporte centros comerciales new.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
 }

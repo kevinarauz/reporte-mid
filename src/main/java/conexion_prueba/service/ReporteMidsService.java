@@ -38,6 +38,8 @@ public class ReporteMidsService {
 
 	private static final Logger log = LoggerFactory.getLogger(ReporteMidsService.class);
 
+	ExcelReader excelReader = new ExcelReader();
+	
 	@Autowired
 	RepositoryReporteMids repositoryReporteMids;
 
@@ -737,6 +739,13 @@ public class ReporteMidsService {
 				.filter(registro -> nombreCC.equals(registro.get("NOMBRE")) && ciudad.equals(registro.get("REGIONAL"))
 						&& com.equals(registro.get("COM")) && tipoTarjeta.equals(registro.get("TIPO")))
 				.map(registro -> obtenerDoubleDeObjetoNew(registro.get("TOTALES"))).findFirst().orElse(0.0);
+	}
+	
+	public void procesarReporte() {
+		List<Map<String, Object>> hoja1 = excelReader.leerArchivoExcel("C:\\Users\\Usuario\\Downloads\\leer\\hoja1.xlsx");
+		//List<Map<String, Object>> hoja2 = excelReader.leerArchivoExcel("C:\\Users\\Usuario\\Downloads\\leer\\hoja2.xlsx");
+		log.error("Se cargaron los datos");
+
 	}
 	
 }
