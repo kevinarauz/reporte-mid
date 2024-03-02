@@ -1,9 +1,11 @@
 package conexion_prueba.service;
 
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -14,43 +16,36 @@ public class ExcelReader {
 
 	public List<Map<String, Object>> leerArchivoExcel(String rutaArchivo) {
         List<Map<String, Object>> filas = new ArrayList<>();
-        FileInputStream file = null;
+        FileInputStream fileInputStream = null;
 
         try {
-            file = new FileInputStream(new File(rutaArchivo));
-            Workbook workbook = new XSSFWorkbook(file);
+            fileInputStream = new FileInputStream(new File(rutaArchivo));
+            Workbook workbook = new XSSFWorkbook(fileInputStream);
             Sheet sheet = workbook.getSheetAt(0);
             Iterator<Row> rowIterator = sheet.iterator();
-            
-            // Suponemos que la primera fila contiene los encabezados de las columnas
-            List<String> encabezados = new ArrayList<>();
-            if (rowIterator.hasNext()) {
-                Row headerRow = rowIterator.next();
-                Iterator<Cell> cellIterator = headerRow.cellIterator();
-                while (cellIterator.hasNext()) {
-                    Cell cell = cellIterator.next();
-                    encabezados.add(cell.getStringCellValue());
-                }
-            }
 
             while (rowIterator.hasNext()) {
                 Row row = rowIterator.next();
-                Map<String, Object> datosCelda = new HashMap<>();
+                Map<String, Object> datosFila = new HashMap<>();
+                // Iterar a través de cada celda de la fila
                 for (int cn = 0; cn < row.getLastCellNum(); cn++) {
                     Cell cell = row.getCell(cn);
                     if (cell != null) {
-                        Object valorCelda = obtenerValorCelda(cell);
-                        datosCelda.put(encabezados.get(cn), valorCelda);
+                        Object valor = obtenerValorCelda(cell);
+                        datosFila.put("Columna" + cn, valor);
+                    } else {
+                        // Manejar celda en blanco/nula según sea necesario
+                        datosFila.put("Columna" + cn, null);
                     }
                 }
-                filas.add(datosCelda);
+                filas.add(datosFila);
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (file != null) {
+            if (fileInputStream != null) {
                 try {
-                    file.close();
+                    fileInputStream.close();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -62,7 +57,7 @@ public class ExcelReader {
     private Object obtenerValorCelda(Cell cell) {
         switch (cell.getCellType()) {
             case Cell.CELL_TYPE_STRING:
-                return cell.getStringCellValue();
+                return cell.getRichStringCellValue().getString();
             case Cell.CELL_TYPE_NUMERIC:
                 if (DateUtil.isCellDateFormatted(cell)) {
                     return cell.getDateCellValue();
@@ -72,7 +67,6 @@ public class ExcelReader {
             case Cell.CELL_TYPE_BOOLEAN:
                 return cell.getBooleanCellValue();
             case Cell.CELL_TYPE_FORMULA:
-                // Aquí podrías manejar la fórmula de manera específica, por ejemplo, evaluándola
                 return cell.getCellFormula();
             default:
                 return null;
