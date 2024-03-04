@@ -393,8 +393,7 @@ public class ReporteMidsService {
 			List<Map<String, Object>> registrosFiltrados = filtrarYSumarRegistros(registros, ciudad, tipoCom,
 					tiposReporte[i]);
 			// Usa las siglas de la ciudad para el nombre de la hoja
-			// generaHoja(workbook, siglasCiudad.get(ciudad), registrosFiltrados,
-			// excludedKeys, titulosReporte[i], inicioFilaPorCiudad.get(ciudad));
+			generaHoja(workbook, siglasCiudad.get(ciudad), registrosFiltrados, excludedKeys, titulosReporte[i], inicioFilaPorCiudad.get(ciudad));
 			// Actualizar el contador de inicio de fila para la siguiente sección
 			int nuevaFilaInicio = inicioFilaPorCiudad.get(ciudad) + registrosFiltrados.size() + 3; // +3 para dejar
 																									// espacio
