@@ -72,4 +72,13 @@ public class RepositoryReporteMids {
         return result;
     }
 	
+	public List<Map<String, Object>> reporteCentrosComercialesCredito(String usuario) {
+        Timestamp now = new Timestamp(new Date().getTime());
+
+        String sql = "EXEC SP_PROCESOCENTROSCOMERCIALESCREDITO_ACT @FECHA = ?, @USUARIO = ?";
+        List<Map<String, Object>> result = jdbcDfreportes.queryForList(sql, now, usuario);
+
+        return result;
+    }
+	
 }

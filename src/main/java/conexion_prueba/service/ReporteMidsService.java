@@ -345,6 +345,45 @@ public class ReporteMidsService {
 		return registros;
 	}
 
+	public void reporteCentrosComercialesCredito(String nombreArchivo) throws IOException {
+		// List<Map<String, Object>> registros =
+		// crearDatosPruebasCentrosComercialesNew();
+		List<Map<String, Object>> registros = repositoryReporteMids.reporteCentrosComercialesCredito("JMUNOZ");
+
+		String tipoCom = "N"; // Asumiendo que este es el filtro inicial y podría cambiar para otros reportes
+
+		// Mapa para las siglas de las ciudades
+		Map<String, String> siglasCiudad = new HashMap<>();
+		siglasCiudad.put("QUITO", "UIO");
+		siglasCiudad.put("GUAYAQUIL", "GYE");
+		siglasCiudad.put("CUENCA", "CUE");
+
+		// Mapas para gestionar el inicio de fila por ciudad
+		Map<String, Integer> inicioFilaPorCiudad = new HashMap<>();
+		inicioFilaPorCiudad.put("QUITO", 0);
+		inicioFilaPorCiudad.put("GUAYAQUIL", 0);
+		inicioFilaPorCiudad.put("CUENCA", 0);
+
+		List<String> excludedKeys = Arrays.asList("");
+		SXSSFWorkbook workbook = new SXSSFWorkbook();
+
+		// Usar el nombre completo de la ciudad para generarReportesPorCiudad y las
+		// siglas para el nombre de las hojas
+		generarReportesCCNewPorCiudad("QUITO", registros, tipoCom, workbook, inicioFilaPorCiudad, excludedKeys,
+				siglasCiudad);
+		generarReportesCCNewPorCiudad("GUAYAQUIL", registros, tipoCom, workbook, inicioFilaPorCiudad, excludedKeys,
+				siglasCiudad);
+		generarReportesCCNewPorCiudad("CUENCA", registros, tipoCom, workbook, inicioFilaPorCiudad, excludedKeys,
+				siglasCiudad);
+
+		// Escribir a archivo
+		try (FileOutputStream outputStream = new FileOutputStream(nombreArchivo + ".xlsx")) {
+			workbook.write(outputStream);
+		} finally {
+			workbook.dispose(); // Liberar recursos de SXSSFWorkbook
+		}
+	}
+
 	// Reporte tarjetas "VS","BG","DC","MC","DI"
 	public void reporteCentrosComercialesNew(String nombreArchivo) throws IOException {
 		// List<Map<String, Object>> registros =
