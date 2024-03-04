@@ -39,7 +39,7 @@ public class ReporteMidsService {
 	private static final Logger log = LoggerFactory.getLogger(ReporteMidsService.class);
 
 	ExcelReader excelReader = new ExcelReader();
-	
+
 	@Autowired
 	RepositoryReporteMids repositoryReporteMids;
 
@@ -270,7 +270,7 @@ public class ReporteMidsService {
 						&& tipo.equals(registro.get("TIPO")))
 				.collect(Collectors.toList());
 
-		Map<String, Double> totalesPorNombre = new HashMap<>();
+		Map<String, Double> totalesPorNombre = new LinkedHashMap<>();
 		double sumaTotal = 0.0;
 		for (Map<String, Object> registro : registrosFiltrados) {
 			Double total = obtenerDoubleDeObjeto(registro.get("TOTALES"));
@@ -282,16 +282,18 @@ public class ReporteMidsService {
 			}
 		}
 
-		// Convertir los totales en una lista de mapas para el resultado deseado
+		// Convertir los totales en una lista de mapas manteniendo el orden deseado
 		List<Map<String, Object>> resultado = totalesPorNombre.entrySet().stream().map(entry -> {
-			Map<String, Object> map = new HashMap<>();
+			Map<String, Object> map = new LinkedHashMap<>();
 			map.put("NOMBRE", entry.getKey());
 			map.put("TOTALES", entry.getValue());
 			return map;
 		}).collect(Collectors.toList());
 
+		resultado.sort((o1, o2) -> ((String) o1.get("NOMBRE")).compareTo((String) o2.get("NOMBRE")));
+
 		// Agregar la fila final con el total general
-		Map<String, Object> totalGeneral = new HashMap<>();
+		Map<String, Object> totalGeneral = new LinkedHashMap<>();
 		totalGeneral.put("NOMBRE", "TOTAL");
 		// Redondear la suma total a dos decimales
 		totalGeneral.put("TOTALES", Math.round(sumaTotal * 100.0) / 100.0);
@@ -393,7 +395,8 @@ public class ReporteMidsService {
 			List<Map<String, Object>> registrosFiltrados = filtrarYSumarRegistros(registros, ciudad, tipoCom,
 					tiposReporte[i]);
 			// Usa las siglas de la ciudad para el nombre de la hoja
-			generaHoja(workbook, siglasCiudad.get(ciudad), registrosFiltrados, excludedKeys, titulosReporte[i], inicioFilaPorCiudad.get(ciudad));
+			generaHoja(workbook, siglasCiudad.get(ciudad), registrosFiltrados, excludedKeys, titulosReporte[i],
+					inicioFilaPorCiudad.get(ciudad));
 			// Actualizar el contador de inicio de fila para la siguiente sección
 			int nuevaFilaInicio = inicioFilaPorCiudad.get(ciudad) + registrosFiltrados.size() + 3; // +3 para dejar
 																									// espacio
@@ -573,9 +576,11 @@ public class ReporteMidsService {
 	}
 
 	public void generarReportesUnificados(String nombreArchivo) throws IOException {
-		//List<Map<String, Object>> registrosDebit = crearDatosPruebasInteroperabilidad();
+		// List<Map<String, Object>> registrosDebit =
+		// crearDatosPruebasInteroperabilidad();
 		List<Map<String, Object>> registrosDebit = repositoryReporteMids.reporteCentrosComercialesDebit("JMUNOZ");
-		//List<Map<String, Object>> registrosNew = crearDatosPruebasCentrosComercialesNew();
+		// List<Map<String, Object>> registrosNew =
+		// crearDatosPruebasCentrosComercialesNew();
 		List<Map<String, Object>> registrosNew = repositoryReporteMids.reporteCentrosComercialesNew("JMUNOZ");
 
 		String tipoCom = "N"; // Asumiendo que este es el filtro inicial y podría cambiar para otros reportes
@@ -651,12 +656,12 @@ public class ReporteMidsService {
 		}
 
 		List<Map<String, Object>> registrosFiltrados = registros.stream()
-		        .filter(registro -> nombresPermitidos.contains(
-		                registro.get("NOMBRE").toString().replaceAll("^\\p{Zs}+|\\p{Zs}+$", ""))
-		                && ciudad.equals(registro.get("REGIONAL").toString().replaceAll("^\\p{Zs}+|\\p{Zs}+$", ""))
-		                && com.equals(registro.get("COM").toString().replaceAll("^\\p{Zs}+|\\p{Zs}+$", ""))
-		                && tipo.equals(registro.get("TIPO").toString().replaceAll("^\\p{Zs}+|\\p{Zs}+$", "")))
-		        .collect(Collectors.toList());
+				.filter(registro -> nombresPermitidos
+						.contains(registro.get("NOMBRE").toString().replaceAll("^\\p{Zs}+|\\p{Zs}+$", ""))
+						&& ciudad.equals(registro.get("REGIONAL").toString().replaceAll("^\\p{Zs}+|\\p{Zs}+$", ""))
+						&& com.equals(registro.get("COM").toString().replaceAll("^\\p{Zs}+|\\p{Zs}+$", ""))
+						&& tipo.equals(registro.get("TIPO").toString().replaceAll("^\\p{Zs}+|\\p{Zs}+$", "")))
+				.collect(Collectors.toList());
 
 		Map<String, Double> totalesPorNombre = new HashMap<>();
 		double sumaTotal = 0.0;
@@ -688,29 +693,27 @@ public class ReporteMidsService {
 		}).collect(Collectors.toList());
 
 		// Agregar nombres permitidos que no están en 'resultado'
-        Set<String> nombresIncluidos = resultado.stream()
-                .map(map -> (String) map.get("NOMBRE"))
-                .collect(Collectors.toSet());
+		Set<String> nombresIncluidos = resultado.stream().map(map -> (String) map.get("NOMBRE"))
+				.collect(Collectors.toSet());
 
-        List<Map<String, Object>> nombresFaltantes = nombresPermitidos.stream()
-                .filter(nombre -> !nombresIncluidos.contains(nombre))
-                .map(nombre -> {
-                    Map<String, Object> map = new LinkedHashMap<>();
-                    Double totalTarjeta = agregarRegistroTarjeta(nombre, tipo.equals("MCDEB") ? "MC" : "VS", registrosNew, ciudad, com);
-                    map.put("NOMBRE", nombre);
-                    map.put("TARJETA", totalTarjeta);
-                    map.put("TOTALES", 0.00);
-                    sumaTotalTarjeta += totalTarjeta;
-                    return map;
-                })
-                .collect(Collectors.toList());
+		List<Map<String, Object>> nombresFaltantes = nombresPermitidos.stream()
+				.filter(nombre -> !nombresIncluidos.contains(nombre)).map(nombre -> {
+					Map<String, Object> map = new LinkedHashMap<>();
+					Double totalTarjeta = agregarRegistroTarjeta(nombre, tipo.equals("MCDEB") ? "MC" : "VS",
+							registrosNew, ciudad, com);
+					map.put("NOMBRE", nombre);
+					map.put("TARJETA", totalTarjeta);
+					map.put("TOTALES", 0.00);
+					sumaTotalTarjeta += totalTarjeta;
+					return map;
+				}).collect(Collectors.toList());
 
-        resultado.addAll(nombresFaltantes);
-		
-        resultado = resultado.stream()
-                .filter(map -> !(map.get("TARJETA").equals(0.0) && map.get("TOTALES").equals(0.0)))
-                .collect(Collectors.toList());
-        
+		resultado.addAll(nombresFaltantes);
+
+		resultado = resultado.stream()
+				.filter(map -> !(map.get("TARJETA").equals(0.0) && map.get("TOTALES").equals(0.0)))
+				.collect(Collectors.toList());
+
 		resultado.sort((o1, o2) -> ((String) o1.get("NOMBRE")).compareTo((String) o2.get("NOMBRE")));
 
 		// Agregar la fila final con el total general
@@ -724,12 +727,12 @@ public class ReporteMidsService {
 	}
 
 	private Double obtenerDoubleDeObjetoNew(Object obj) {
-	    try {
-	        return Double.parseDouble(obj.toString());
-	    } catch (NumberFormatException e) {
-	    	log.error("Error: "+obj.toString());
-	        return 0.0;
-	    }
+		try {
+			return Double.parseDouble(obj.toString());
+		} catch (NumberFormatException e) {
+			log.error("Error: " + obj.toString());
+			return 0.0;
+		}
 	}
 
 	private Double agregarRegistroTarjeta(String nombreCC, String tipoTarjeta, List<Map<String, Object>> registrosNew,
@@ -739,11 +742,13 @@ public class ReporteMidsService {
 						&& com.equals(registro.get("COM")) && tipoTarjeta.equals(registro.get("TIPO")))
 				.map(registro -> obtenerDoubleDeObjetoNew(registro.get("TOTALES"))).findFirst().orElse(0.0);
 	}
-	
+
 	public void procesarReporte() {
-		List<Map<String, Object>> hoja1 = excelReader.leerArchivoExcel("C:\\Users\\Usuario\\Downloads\\leer\\hoja3.xlsx");
-		//List<Map<String, Object>> hoja2 = excelReader.leerArchivoExcel("C:\\Users\\Usuario\\Downloads\\leer\\hoja2.xlsx");
+		List<Map<String, Object>> hoja1 = excelReader
+				.leerArchivoExcel("C:\\Users\\Usuario\\Downloads\\leer\\hoja3.xlsx");
+		// List<Map<String, Object>> hoja2 =
+		// excelReader.leerArchivoExcel("C:\\Users\\Usuario\\Downloads\\leer\\hoja2.xlsx");
 		log.error("Se cargaron los datos");
 	}
-	
+
 }
