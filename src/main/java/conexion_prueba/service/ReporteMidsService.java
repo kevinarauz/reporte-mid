@@ -283,6 +283,12 @@ public class ReporteMidsService {
 				sumaTotal += total;
 			}
 		}
+		
+		for (String nombre : nombresPermitidos) {
+			if (!totalesPorNombre.containsKey(nombre)) {
+				totalesPorNombre.put(nombre, 0.00);
+			}
+		}
 
 		// Convertir los totales en una lista de mapas manteniendo el orden deseado
 		List<Map<String, Object>> resultado = totalesPorNombre.entrySet().stream().map(entry -> {
