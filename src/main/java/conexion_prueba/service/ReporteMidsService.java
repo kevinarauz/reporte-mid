@@ -1,5 +1,6 @@
 package conexion_prueba.service;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -819,6 +820,17 @@ public class ReporteMidsService {
     }
 	
 	public void nivelesServicios() {
+		File folder = new File("C:\\Users\\JUMUNOZ\\Downloads");
+        File[] listOfFiles = folder.listFiles();
+        System.out.println("Archivos en el directorio:");
+        for (int i = 0; i < listOfFiles.length; i++) {
+            if (listOfFiles[i].isFile()) {
+                System.out.println("Archivo: " + listOfFiles[i].getName());
+            } else if (listOfFiles[i].isDirectory()) {
+                System.out.println("Directorio: " + listOfFiles[i].getName());
+            }
+        }
+		
         List<Map<String, Object>> listaExcel = excelReader.leerArchivoExcel("C:\\Users\\Usuario\\Downloads\\Libro1.xlsx");
         if (!listaExcel.isEmpty()) {
             // Obtenemos las cabeceras
