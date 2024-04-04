@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -91,35 +92,55 @@ public class RepositoryReporteMids {
     }
 	
 	public int insertarNivelesServicios(Map<String, Object> reporte) {
-        String sql = "INSERT INTO tmpnivelesservicio " +
-                     "(Fecha, Inicia, Finaliza, Duracion, Motivo, Contacto_Datafast, Contacto_Emisor, Solucion) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        try {
-            return jdbcDfreportes.update(sql, new PreparedStatementSetter() {
-                @SuppressWarnings("deprecation")
-				@Override
-                public void setValues(PreparedStatement ps) throws SQLException {
-                	try {
-                		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-						Date fechaConvertida = format.parse(reporte.get("Fecha").toString());
-						ps.setDate(1, (java.sql.Date) fechaConvertida);
-					} catch (ParseException e) {
-						log.error("Error al parsear la fecha: {}", e.getMessage());
-	                    throw new SQLException("Error al parsear la fecha", e);
-					}
-                    ps.setString(2, reporte.get("Inicia").toString());
-                    ps.setString(3, reporte.get("Finaliza").toString());
-                    ps.setString(4, reporte.get("Duración").toString());
-                    ps.setString(5, reporte.get("Motivo").toString());
-                    ps.setString(6, reporte.get("Contacto Datafast").toString());
-                    ps.setString(7, reporte.get("Contacto Emisor").toString());
-                    ps.setString(8, reporte.get("Solución").toString());
-                }
-            });
-        } catch (Exception e) {
-            log.error("Error al insertar reporte: {}", e.getMessage());
-            return 0;
-        }
-    }
+		
+	    String sql = "INSERT INTO tmpnivelesservicio " +
+	                 "(Fecha, Inicia, Finaliza, Duracion, Motivo, Contacto_Datafast, Contacto_Emisor, Solucion) " +
+	                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+	    try {
+	        return jdbcDfreportes.update(sql, ps -> {
+	            /*try {
+	                // Asegúrate de que el formato de fecha que recibe es el esperado
+	                SimpleDateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
+	                format.setTimeZone(TimeZone.getTimeZone("COT")); // Establecer la zona horaria si es necesario
+	                java.util.Date fechaConvertida = format.parse(reporte.get("Fecha").toString());
+	                ps.setDate(1, new java.sql.Date(fechaConvertida.getTime())); // Correcto cast a java.sql.Date
+	            } catch (ParseException e) {
+	                log.error("Error al parsear la fecha: {}", e.getMessage());
+	                throw new SQLException("Error al parsear la fecha", e);
+	            }*/
+	            try {
+	            	//String fechaOriginal = reporte.get("Fecha").toString();
+		            //SimpleDateFormat formatoOriginal = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'COT' yyyy", Locale.ENGLISH);
+		            //formatoOriginal.setTimeZone(TimeZone.getTimeZone("America/Bogota"));
+	                //Date fecha = formatoOriginal.parse(fechaOriginal);
+	                //SimpleDateFormat formatoDeseado = new SimpleDateFormat("dd/MM/yyyy");
+	                //String fechaFormateada = formatoDeseado.format(fecha);
+	                //ps.setDate(1, fechaFormateada);
+	            	String fechaOriginal = reporte.get("Fecha").toString();
+	                SimpleDateFormat formatoOriginal = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'COT' yyyy", Locale.ENGLISH);
+	                formatoOriginal.setTimeZone(TimeZone.getTimeZone("America/Bogota"));
+	                Date fecha = formatoOriginal.parse(fechaOriginal);
+
+	                // Convertir a java.sql.Date
+	                java.sql.Date fechaSql = new java.sql.Date(fecha.getTime());
+
+	                ps.setDate(1, fechaSql);
+	            } catch (ParseException e) {
+	            	log.error("Error al parsear la fecha: {}", e.getMessage());
+	                throw new SQLException("Error al parsear la fecha", e);
+	            }
+	            ps.setString(2, reporte.get("Inicia").toString());
+	            ps.setString(3, reporte.get("Finaliza").toString());
+	            ps.setString(4, reporte.get("Duracion").toString());
+	            ps.setString(5, reporte.get("Motivo").toString());
+	            ps.setString(6, reporte.get("Contacto Datafast").toString());
+	            ps.setString(7, reporte.get("Contacto Emisor").toString());
+	            ps.setString(8, reporte.get("Solucion").toString());
+	        });
+	    } catch (Exception e) {
+	        log.error("Error al insertar reporte: {}", e.getMessage());
+	        return 0;
+	    }
+	}
 	
 }
