@@ -98,32 +98,12 @@ public class RepositoryReporteMids {
 	                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 	    try {
 	        return jdbcDfreportes.update(sql, ps -> {
-	            /*try {
-	                // Asegúrate de que el formato de fecha que recibe es el esperado
-	                SimpleDateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
-	                format.setTimeZone(TimeZone.getTimeZone("COT")); // Establecer la zona horaria si es necesario
-	                java.util.Date fechaConvertida = format.parse(reporte.get("Fecha").toString());
-	                ps.setDate(1, new java.sql.Date(fechaConvertida.getTime())); // Correcto cast a java.sql.Date
-	            } catch (ParseException e) {
-	                log.error("Error al parsear la fecha: {}", e.getMessage());
-	                throw new SQLException("Error al parsear la fecha", e);
-	            }*/
 	            try {
-	            	//String fechaOriginal = reporte.get("Fecha").toString();
-		            //SimpleDateFormat formatoOriginal = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'COT' yyyy", Locale.ENGLISH);
-		            //formatoOriginal.setTimeZone(TimeZone.getTimeZone("America/Bogota"));
-	                //Date fecha = formatoOriginal.parse(fechaOriginal);
-	                //SimpleDateFormat formatoDeseado = new SimpleDateFormat("dd/MM/yyyy");
-	                //String fechaFormateada = formatoDeseado.format(fecha);
-	                //ps.setDate(1, fechaFormateada);
 	            	String fechaOriginal = reporte.get("Fecha").toString();
 	                SimpleDateFormat formatoOriginal = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'COT' yyyy", Locale.ENGLISH);
 	                formatoOriginal.setTimeZone(TimeZone.getTimeZone("America/Bogota"));
 	                Date fecha = formatoOriginal.parse(fechaOriginal);
-
-	                // Convertir a java.sql.Date
 	                java.sql.Date fechaSql = new java.sql.Date(fecha.getTime());
-
 	                ps.setDate(1, fechaSql);
 	            } catch (ParseException e) {
 	            	log.error("Error al parsear la fecha: {}", e.getMessage());
