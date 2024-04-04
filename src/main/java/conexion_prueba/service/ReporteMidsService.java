@@ -843,7 +843,7 @@ public class ReporteMidsService {
                 repositoryReporteMids.insertarNivelesServicios(filaFormateada);
             }
         }
-        log.error("Se cargaron los datos");
+        log.info("Se cargaron los datos");
     }
 
 }
