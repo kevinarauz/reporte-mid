@@ -102,7 +102,7 @@ public class RepositoryReporteMids {
                 	try {
                 		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 						Date fechaConvertida = format.parse(reporte.get("Fecha").toString());
-						ps.setDate(1, (java.sql.Date) new Date(reporte.get("Fecha").toString()));
+						ps.setDate(1, (java.sql.Date) fechaConvertida);
 					} catch (ParseException e) {
 						log.error("Error al parsear la fecha: {}", e.getMessage());
 	                    throw new SQLException("Error al parsear la fecha", e);
