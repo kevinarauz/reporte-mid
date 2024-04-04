@@ -147,4 +147,20 @@ public class ReporteMidsController {
         }
     }
     
+    @GetMapping("/NivelesServicios")
+    public ResponseEntity<?> nivelesServicios() {
+        ThreadContext.put("sid", UUID.randomUUID().toString());
+        String nombreArchivo = "Consulta Niveles De Servicios - " + new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+        try {
+            this.reporteMidsService.nivelesServicios();
+            String mensajeRespuesta = String.format("El reporte '%s.xlsx' ha sido generado exitosamente.", nombreArchivo);
+            Map<String, String> respuesta = new HashMap<>();
+            respuesta.put("mensaje", mensajeRespuesta);
+            respuesta.put("nombreArchivo", nombreArchivo + ".xlsx");
+            return new ResponseEntity<>(respuesta, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Ocurrió un error al generar el reporte Niveles De Servicios.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

@@ -27,6 +27,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
@@ -797,5 +804,34 @@ public class ReporteMidsService {
 		// excelReader.leerArchivoExcel("C:\\Users\\Usuario\\Downloads\\leer\\hoja2.xlsx");
 		log.error("Se cargaron los datos");
 	}
+	
+	private static final ObjectMapper objectMapper = new ObjectMapper();
+	
+	private List<Map<String, Object>> convertirJsonALista(String json) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.readValue(json,
+                    new com.fasterxml.jackson.core.type.TypeReference<List<Map<String, Object>>>() {});
+        } catch (IOException e) {
+            log.error("Error al convertir de JSON a Lista: {}", e.getMessage());
+            return null;
+        }
+    }
+	
+	public void nivelesServicios() {
+        List<Map<String, Object>> listaExcel = excelReader.leerArchivoExcel("C:\\Users\\Usuario\\Downloads\\Libro1.xlsx");
+        if (!listaExcel.isEmpty()) {
+            // Obtenemos las cabeceras
+            Map<String, Object> cabeceras = listaExcel.get(0);
+            // Usamos LinkedHashMap para mantener el orden de inserción
+            for (int i = 1; i < listaExcel.size(); i++) {
+                Map<String, Object> filaActual = listaExcel.get(i);
+                Map<String, Object> filaFormateada = new LinkedHashMap<>();
+                cabeceras.forEach((key, value) -> filaFormateada.put((String)value, filaActual.get(key)));
+                repositoryReporteMids.insertarNivelesServicios(filaFormateada);
+            }
+        }
+        log.error("Se cargaron los datos");
+    }
 
 }

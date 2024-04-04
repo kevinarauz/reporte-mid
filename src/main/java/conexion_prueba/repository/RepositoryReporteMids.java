@@ -1,6 +1,11 @@
 package conexion_prueba.repository;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Time;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,6 +18,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 
@@ -79,6 +88,38 @@ public class RepositoryReporteMids {
         List<Map<String, Object>> result = jdbcDfreportes.queryForList(sql, now, usuario);
 
         return result;
+    }
+	
+	public int insertarNivelesServicios(Map<String, Object> reporte) {
+        String sql = "INSERT INTO tmpnivelesservicio " +
+                     "(Fecha, Inicia, Finaliza, Duracion, Motivo, Contacto_Datafast, Contacto_Emisor, Solucion) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        try {
+            return jdbcDfreportes.update(sql, new PreparedStatementSetter() {
+                @SuppressWarnings("deprecation")
+				@Override
+                public void setValues(PreparedStatement ps) throws SQLException {
+                	try {
+                		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+						Date fechaConvertida = format.parse(reporte.get("Fecha").toString());
+						ps.setDate(1, (java.sql.Date) new Date(reporte.get("Fecha").toString()));
+					} catch (ParseException e) {
+						log.error("Error al parsear la fecha: {}", e.getMessage());
+	                    throw new SQLException("Error al parsear la fecha", e);
+					}
+                    ps.setString(2, reporte.get("Inicia").toString());
+                    ps.setString(3, reporte.get("Finaliza").toString());
+                    ps.setString(4, reporte.get("Duración").toString());
+                    ps.setString(5, reporte.get("Motivo").toString());
+                    ps.setString(6, reporte.get("Contacto Datafast").toString());
+                    ps.setString(7, reporte.get("Contacto Emisor").toString());
+                    ps.setString(8, reporte.get("Solución").toString());
+                }
+            });
+        } catch (Exception e) {
+            log.error("Error al insertar reporte: {}", e.getMessage());
+            return 0;
+        }
     }
 	
 }
