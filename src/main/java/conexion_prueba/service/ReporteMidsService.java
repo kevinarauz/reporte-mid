@@ -630,7 +630,7 @@ public class ReporteMidsService {
 
 	}
 
-	public void generarReportesUnificados(String nombreArchivo) throws IOException {
+	public void generarReportesUnificados(String nombreArchivo, String tipoCom) throws IOException {
 		// List<Map<String, Object>> registrosDebit =
 		// crearDatosPruebasInteroperabilidad();
 		List<Map<String, Object>> registrosDebit = repositoryReporteMids.reporteCentrosComercialesDebit("JMUNOZ");
@@ -638,7 +638,7 @@ public class ReporteMidsService {
 		// crearDatosPruebasCentrosComercialesNew();
 		List<Map<String, Object>> registrosNew = repositoryReporteMids.reporteCentrosComercialesNew("JMUNOZ");
 
-		String tipoCom = "N"; // Asumiendo que este es el filtro inicial y podría cambiar para otros reportes
+		//String tipoCom = "S"; // Asumiendo que este es el filtro inicial y podría cambiar para otros reportes
 
 		// Mapa para las siglas de las ciudades
 		Map<String, String> siglasCiudad = new HashMap<>();

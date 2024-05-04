@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import conexion_prueba.service.ReporteMidsService;
@@ -113,11 +114,11 @@ public class ReporteMidsController {
     }
     
     @GetMapping("/ConsultaCentrosComerciales")
-    public ResponseEntity<?> reporteCentrosComerciales() {
+    public ResponseEntity<?> reporteCentrosComerciales(@RequestParam String tipoCom) {
         ThreadContext.put("sid", UUID.randomUUID().toString());
         String nombreArchivo = "Reporte Centros Comerciales New - " + new SimpleDateFormat("dd-MM-yyyy").format(new Date());
         try {
-            this.reporteMidsService.generarReportesUnificados(nombreArchivo);
+            this.reporteMidsService.generarReportesUnificados(nombreArchivo,tipoCom);
             String mensajeRespuesta = String.format("El reporte '%s.xlsx' ha sido generado exitosamente.", nombreArchivo);
             // Puedes retornar el nombre del archivo para que el cliente sepa cómo acceder a él
             Map<String, String> respuesta = new HashMap<>();
