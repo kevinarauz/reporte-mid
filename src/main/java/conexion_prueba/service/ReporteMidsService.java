@@ -361,12 +361,12 @@ public class ReporteMidsService {
 		return registros;
 	}
 
-	public void reporteCentrosComercialesCredito(String nombreArchivo) throws IOException {
+	public void reporteCentrosComercialesCredito(String nombreArchivo, String tipoCom) throws IOException {
 		// List<Map<String, Object>> registros =
 		// crearDatosPruebasCentrosComercialesNew();
 		List<Map<String, Object>> registros = repositoryReporteMids.reporteCentrosComercialesCredito("JMUNOZ");
 
-		String tipoCom = "N"; // Asumiendo que este es el filtro inicial y podría cambiar para otros reportes
+		//String tipoCom = "N"; // Asumiendo que este es el filtro inicial y podría cambiar para otros reportes
 
 		// Mapa para las siglas de las ciudades
 		Map<String, String> siglasCiudad = new HashMap<>();
@@ -401,12 +401,12 @@ public class ReporteMidsService {
 	}
 
 	// Reporte tarjetas "VS","BG","DC","MC","DI"
-	public void reporteCentrosComercialesNew(String nombreArchivo) throws IOException {
+	public void reporteCentrosComercialesNew(String nombreArchivo, String tipoCom) throws IOException {
 		// List<Map<String, Object>> registros =
 		// crearDatosPruebasCentrosComercialesNew();
 		List<Map<String, Object>> registros = repositoryReporteMids.reporteCentrosComercialesNew("JMUNOZ");
 
-		String tipoCom = "N"; // Asumiendo que este es el filtro inicial y podría cambiar para otros reportes
+		//String tipoCom = "N"; // Asumiendo que este es el filtro inicial y podría cambiar para otros reportes
 
 		// Mapa para las siglas de las ciudades
 		Map<String, String> siglasCiudad = new HashMap<>();

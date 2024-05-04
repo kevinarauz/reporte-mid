@@ -78,11 +78,11 @@ public class ReporteMidsController {
     }
 
     @GetMapping("/ConsultaCentrosComercialesNew")
-    public ResponseEntity<?> reporteCentrosComercialesNew() {
+    public ResponseEntity<?> reporteCentrosComercialesNew(@RequestParam String tipoCom) {
         ThreadContext.put("sid", UUID.randomUUID().toString());
         String nombreArchivo = "Reporte Centros Comerciales New - " + new SimpleDateFormat("dd-MM-yyyy").format(new Date());
         try {
-            this.reporteMidsService.reporteCentrosComercialesNew(nombreArchivo);
+            this.reporteMidsService.reporteCentrosComercialesNew(nombreArchivo,tipoCom);
             String mensajeRespuesta = String.format("El reporte '%s.xlsx' ha sido generado exitosamente.", nombreArchivo);
             // Puedes retornar el nombre del archivo para que el cliente sepa cómo acceder a él
             Map<String, String> respuesta = new HashMap<>();
@@ -96,11 +96,11 @@ public class ReporteMidsController {
     }
     
     @GetMapping("/ConsultaCentrosComercialesCredito")
-    public ResponseEntity<?> reporteCentrosComercialesCredito() {
+    public ResponseEntity<?> reporteCentrosComercialesCredito(@RequestParam String tipoCom) {
     	ThreadContext.put("sid", UUID.randomUUID().toString());
         String nombreArchivo = "Reporte Centros Comerciales Credito - " + new SimpleDateFormat("dd-MM-yyyy").format(new Date());
         try {
-            this.reporteMidsService.reporteCentrosComercialesCredito(nombreArchivo);
+            this.reporteMidsService.reporteCentrosComercialesCredito(nombreArchivo,tipoCom);
             String mensajeRespuesta = String.format("El reporte '%s.xlsx' ha sido generado exitosamente.", nombreArchivo);
             // Puedes retornar el nombre del archivo para que el cliente sepa cómo acceder a él
             Map<String, String> respuesta = new HashMap<>();
