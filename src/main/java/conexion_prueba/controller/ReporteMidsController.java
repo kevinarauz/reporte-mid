@@ -22,8 +22,6 @@ import conexion_prueba.service.ReporteMidsService;
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/ReporteMids")
-
-
 public class ReporteMidsController {
 	
 	@Autowired

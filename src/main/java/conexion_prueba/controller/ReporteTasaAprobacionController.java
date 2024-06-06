@@ -22,26 +22,37 @@ import conexion_prueba.service.ReporteTasaAprobacionService;
 @CrossOrigin(origins = "*")
 @RequestMapping("/TasaAprobacion")
 public class ReporteTasaAprobacionController {
-	
+
 	@Autowired
 	ReporteTasaAprobacionService reporteTasaAprobacionService;
 
 	@GetMapping("/ConsultaTasaAprobacion")
-    public ResponseEntity<?> consultaTasaAprobacion() {
-        ThreadContext.put("sid", UUID.randomUUID().toString());
-        String nombreArchivo = "Reporte Tasa Aprobacion - " + new SimpleDateFormat("dd-MM-yyyy").format(new Date());
-        try {
-            this.reporteTasaAprobacionService.consultaTasaAprobacion(nombreArchivo);
-            String mensajeRespuesta = String.format("El reporte consultaTasaAprobacion '%s.xlsx' ha sido generado exitosamente.", nombreArchivo);
-            // Puedes retornar el nombre del archivo para que el cliente sepa cómo acceder a él
-            Map<String, String> respuesta = new HashMap<>();
-            respuesta.put("mensaje", mensajeRespuesta);
-            respuesta.put("nombreArchivo", nombreArchivo + ".xlsx");
-            return new ResponseEntity<>(respuesta, HttpStatus.OK);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>("Ocurrió un error al generar el reporte consultaTasaAprobacion.", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-	
+	public ResponseEntity<?> consultaTasaAprobacion() {
+		ThreadContext.put("sid", UUID.randomUUID().toString());
+		String nombreArchivo = "Reporte Tasa Aprobacion - " + new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+		try {
+			this.reporteTasaAprobacionService.consultaTasaAprobacion(nombreArchivo);
+			String mensajeRespuesta = String.format(
+					"El reporte consultaTasaAprobacion '%s.xlsx' ha sido generado exitosamente.", nombreArchivo);
+			// Puedes retornar el nombre del archivo para que el cliente sepa cómo acceder a
+			// él
+			Map<String, String> respuesta = new HashMap<>();
+			respuesta.put("mensaje", mensajeRespuesta);
+			respuesta.put("nombreArchivo", nombreArchivo + ".xlsx");
+			return new ResponseEntity<>(respuesta, HttpStatus.OK);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return new ResponseEntity<>("Ocurrió un error al generar el reporte consultaTasaAprobacion.",
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@GetMapping("/enviarEmail")
+	public ResponseEntity<?> enviarEmail() {
+		ThreadContext.put("sid", UUID.randomUUID().toString());
+		Map<String, String> respuesta = new HashMap<>();
+		respuesta.put("mensaje", "Correo enviado correctamente");
+		return new ResponseEntity<>(respuesta, HttpStatus.OK);
+	}
+
 }
