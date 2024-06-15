@@ -1,5 +1,6 @@
 package conexion_prueba;
 
+import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -35,6 +36,11 @@ public class ConexionApplication {
 	public static void main(String[] args) {
 		ApplicationContext ctx = SpringApplication.run(ConexionApplication.class, args);
 		ConexionApplication app = ctx.getBean(ConexionApplication.class);
+		app.verificarConectividad("smtp.gmail.com", 465);
+		app.verificarConectividad("192.168.11.31", 465);
+		app.verificarConectividad("192.168.11.31", 587);
+		app.verificarConectividad("192.168.11.31", 25);
+		app.verificarConectividad("192.168.11.6", 25);
 		app.verificaEmailKevin();
 		app.verificaEmailJessy1();
 		app.verificaEmailJessy2();
@@ -119,7 +125,7 @@ public class ConexionApplication {
 	    Properties props = new Properties();
 	    props.put("mail.smtp.host", "192.168.11.31"); // Servidor
 	    props.put("mail.smtp.auth", "true");
-	    props.put("mail.smtp.port", "587"); // Usar el puerto 465 para SSL
+	    props.put("mail.smtp.port", "587");
 
 	    // Autenticación
 	    Session session = Session.getDefaultInstance(props,
@@ -208,6 +214,15 @@ public class ConexionApplication {
 
 	    Transport.send(message);
 	    log.info("Correo enviado exitosamente!");
+	}
+	
+	private void verificarConectividad(String smtpHost, int smtpPort) {
+        try (Socket socket = new Socket(smtpHost, smtpPort)) {
+            log.info("Conexión exitosa a " + smtpHost + " en el puerto " + smtpPort);
+        } catch (Exception e) {
+            log.info("No se pudo conectar a " + smtpHost + " en el puerto " + smtpPort);
+            log.info("No se pudo conectar a "+e);
+        }
 	}
 	
 }
