@@ -22,7 +22,7 @@ public class ConexionApplication {
     public static void main(String[] args) {
         ApplicationContext ctx = SpringApplication.run(ConexionApplication.class, args);
         ConexionApplication app = ctx.getBean(ConexionApplication.class);
-        app.verificarConectividad("smtp.gmail.com", 465);
+        //app.verificarConectividad("smtp.gmail.com", 465);
         app.verificarConectividad("192.168.11.31", 465);
         app.verificarConectividad("192.168.11.31", 587);
         app.verificarConectividad("192.168.11.31", 25);
@@ -32,7 +32,7 @@ public class ConexionApplication {
         app.verificarConectividad("smtp.office365.com", 465);
         app.verificarConectividad("smtp.office365.com", 587);
         app.verificarConectividad("smtp.office365.com", 25);
-        app.verificaEmailKevin();
+        //app.verificaEmailKevin();
         app.verificaEmailJessy1();
         app.verificaEmailJessy2();
         app.verificaEmailJessy3();
