@@ -39,6 +39,7 @@ public class ConexionApplication {
 		app.verificaEmailJessy1();
 		app.verificaEmailJessy2();
 		app.verificaEmailJessy3();
+		app.verificaEmailJessy4();
 	}
 	
 	public void verificaEmailKevin() {
@@ -167,6 +168,34 @@ public class ConexionApplication {
 	        enviarCorreoKevin(session);
 	    } catch (MessagingException e) {
 	        log.error("Error al enviar el correo Jessy3", e);
+	    }
+	}
+	
+	public void verificaEmailJessy4() {
+	    Properties props = new Properties();
+	    props.put("mail.smtp.host", "192.168.11.6"); // Servidor
+	    props.put("mail.smtp.auth", "true");
+	    props.put("mail.smtp.port", "25");
+
+	    // Autenticación
+	    Session session = Session.getDefaultInstance(props,
+	        new javax.mail.Authenticator() {
+	            protected PasswordAuthentication getPasswordAuthentication() {
+	                return new PasswordAuthentication("notificacionesti@datafast.com.ec", "5ygcckxV");
+	            }
+	        });
+
+	    try {
+	    	// Primero intentamos establecer una conexión con el servidor SMTP
+	        Transport transport = session.getTransport("smtp");
+	        transport.connect("192.168.11.31", "notificacionesti@datafast.com.ec", "5ygcckxV");
+	        transport.close(); // Cerramos la conexión una vez verificada
+	        log.info("Conexión con el servidor SMTP exitosa Jessy4!");
+
+	        // Si la conexión es exitosa, procedemos a enviar el correo
+	        enviarCorreoKevin(session);
+	    } catch (MessagingException e) {
+	        log.error("Error al enviar el correo Jessy4", e);
 	    }
 	}
 	
