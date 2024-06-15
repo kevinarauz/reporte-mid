@@ -40,7 +40,12 @@ public class ConexionApplication {
 		app.verificarConectividad("192.168.11.31", 465);
 		app.verificarConectividad("192.168.11.31", 587);
 		app.verificarConectividad("192.168.11.31", 25);
+		app.verificarConectividad("192.168.11.6", 465);
+		app.verificarConectividad("192.168.11.6", 587);
 		app.verificarConectividad("192.168.11.6", 25);
+		app.verificarConectividad("smtp.office365.com", 465);
+		app.verificarConectividad("smtp.office365.com", 587);
+		app.verificarConectividad("smtp.office365.com", 25);
 		app.verificaEmailKevin();
 		app.verificaEmailJessy1();
 		app.verificaEmailJessy2();
