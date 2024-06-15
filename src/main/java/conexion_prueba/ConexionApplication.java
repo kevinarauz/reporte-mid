@@ -33,7 +33,7 @@ public class ConexionApplication {
         app.verificarConectividad("smtp.office365.com", 587);
         app.verificarConectividad("smtp.office365.com", 25);
         //app.verificaEmailKevin();
-        app.verificaEmailJessy1();
+        //app.verificaEmailJessy1();
         app.verificaEmailJessy2();
         app.verificaEmailJessy3();
         app.verificaEmailJessy4();
@@ -176,6 +176,9 @@ public class ConexionApplication {
         if (port == 465) {
             props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
             props.put("mail.smtp.socketFactory.port", String.valueOf(port));
+        } else if (port == 587) {
+            // Usar STARTTLS
+            props.put("mail.smtp.starttls.enable", "true");
         }
         return props;
     }
