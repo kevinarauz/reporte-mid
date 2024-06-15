@@ -188,7 +188,7 @@ public class ConexionApplication {
 	    try {
 	    	// Primero intentamos establecer una conexión con el servidor SMTP
 	        Transport transport = session.getTransport("smtp");
-	        transport.connect("192.168.11.31", "notificacionesti@datafast.com.ec", "5ygcckxV");
+	        transport.connect("192.168.11.6", "notificacionesti@datafast.com.ec", "5ygcckxV");
 	        transport.close(); // Cerramos la conexión una vez verificada
 	        log.info("Conexión con el servidor SMTP exitosa Jessy4!");
 
