@@ -42,7 +42,7 @@ public class ConexionApplication {
         dataFastServices2.sendEmail("noreply@datafast.com.ec", "jmunoz@datafast.com.ec", "Prueba Correo", "Este es el cuerpo del mensaje para SMTP.");
         
         //File attachment = new File("C:\\Java\\Test.xlsx");
-        dataFastServices.sendEmail("noreply@datafast.com.ec", "jmunoz@datafast.com.ec", "Prueba Gmail con archivo", "Este es el cuerpo del mensaje para Gmail con archivo.", attachment);
+        dataFastServices2.sendEmail("noreply@datafast.com.ec", "jmunoz@datafast.com.ec", "Prueba Gmail con archivo", "Este es el cuerpo del mensaje para Gmail con archivo.", attachment);
         
         //app.verificarConectividad("smtp.gmail.com", 465);
         //app.verificarConectividad("192.168.11.31", 465);
