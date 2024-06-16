@@ -1,5 +1,6 @@
 package conexion_prueba;
 
+import java.io.File;
 import java.net.Socket;
 import java.util.Properties;
 import javax.mail.Message;
@@ -26,7 +27,11 @@ public class ConexionApplication {
         ConexionApplication app = ctx.getBean(ConexionApplication.class);
         //EmailService gmailService = new EmailService("smtp.gmail.com", 465, "kevin.arauzg@gmail.com", "yjnf xwlo mkbv ybqh", true);
         //gmailService.sendEmail("kevin.arauzg@gmail.com", "kevin.arauzg@gmail.com", "Prueba Gmail", "Este es el cuerpo del mensaje para Gmail.");
-
+        
+        // Para enviar un correo con archivo adjunto
+        //File attachment = new File("C:\\Users\\Usuario\\Documents\\Global Hitss\\Proyectos\\reporte-mid\\src\\main\\java\\conexion_prueba\\Test.xlsx");
+        //gmailService.sendEmail("kevin.arauzg@gmail.com", "kevin.arauzg@gmail.com", "Prueba Gmail con archivo", "Este es el cuerpo del mensaje para Gmail con archivo.", attachment);
+        
         EmailService dataFastServices = new EmailService("192.168.11.6", 25, "notificacionesti@datafast.com.ec", "5ygcckxV", false);
         dataFastServices.sendEmail("notificacionesti@datafast.com.ec", "jmunoz@datafast.com.ec", "Prueba Correo", "Este es el cuerpo del mensaje para SMTP.");
         
