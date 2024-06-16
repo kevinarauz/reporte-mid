@@ -29,14 +29,20 @@ public class ConexionApplication {
         //gmailService.sendEmail("kevin.arauzg@gmail.com", "kevin.arauzg@gmail.com", "Prueba Gmail", "Este es el cuerpo del mensaje para Gmail.");
         
         // Para enviar un correo con archivo adjunto
-        //File attachment = new File("C:\\Users\\Usuario\\Documents\\Global Hitss\\Proyectos\\reporte-mid\\src\\main\\java\\conexion_prueba\\Test.xlsx");
+        File attachment = new File("C:\\Java\\Test.xlsx");
         //gmailService.sendEmail("kevin.arauzg@gmail.com", "kevin.arauzg@gmail.com", "Prueba Gmail con archivo", "Este es el cuerpo del mensaje para Gmail con archivo.", attachment);
         
         EmailService dataFastServices = new EmailService("192.168.11.6", 25, "notificacionesti@datafast.com.ec", "5ygcckxV", false);
         dataFastServices.sendEmail("notificacionesti@datafast.com.ec", "jmunoz@datafast.com.ec", "Prueba Correo", "Este es el cuerpo del mensaje para SMTP.");
         
+        //File attachment = new File("C:\\Java\\Test.xlsx");
+        dataFastServices.sendEmail("notificacionesti@datafast.com.ec", "jmunoz@datafast.com.ec", "Prueba Gmail con archivo", "Este es el cuerpo del mensaje para Gmail con archivo.", attachment);
+        
         EmailService dataFastServices2 = new EmailService("192.168.11.6", 25, "noreply@datafast.com.ec", "", false);
         dataFastServices2.sendEmail("noreply@datafast.com.ec", "jmunoz@datafast.com.ec", "Prueba Correo", "Este es el cuerpo del mensaje para SMTP.");
+        
+        //File attachment = new File("C:\\Java\\Test.xlsx");
+        dataFastServices.sendEmail("noreply@datafast.com.ec", "jmunoz@datafast.com.ec", "Prueba Gmail con archivo", "Este es el cuerpo del mensaje para Gmail con archivo.", attachment);
         
         //app.verificarConectividad("smtp.gmail.com", 465);
         //app.verificarConectividad("192.168.11.31", 465);
