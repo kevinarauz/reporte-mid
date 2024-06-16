@@ -23,20 +23,26 @@ public class ConexionApplication {
         ApplicationContext ctx = SpringApplication.run(ConexionApplication.class, args);
         ConexionApplication app = ctx.getBean(ConexionApplication.class);
         //app.verificarConectividad("smtp.gmail.com", 465);
-        app.verificarConectividad("192.168.11.31", 465);
-        app.verificarConectividad("192.168.11.31", 587);
-        app.verificarConectividad("192.168.11.31", 25);
-        app.verificarConectividad("192.168.11.6", 465);
-        app.verificarConectividad("192.168.11.6", 587);
+        //app.verificarConectividad("192.168.11.31", 465);
+        //app.verificarConectividad("192.168.11.31", 587);
+        //app.verificarConectividad("192.168.11.31", 25);
+        //app.verificarConectividad("192.168.11.6", 465);
+        //app.verificarConectividad("192.168.11.6", 587);
         app.verificarConectividad("192.168.11.6", 25);
-        app.verificarConectividad("smtp.office365.com", 465);
-        app.verificarConectividad("smtp.office365.com", 587);
-        app.verificarConectividad("smtp.office365.com", 25);
+        //app.verificarConectividad("smtp.office365.com", 465);
+        //app.verificarConectividad("smtp.office365.com", 587);
+        //app.verificarConectividad("smtp.office365.com", 25);
+        //pruebas fallidas
         //app.verificaEmailKevin();
         //app.verificaEmailJessy1();
-        app.verificaEmailJessy2();
-        app.verificaEmailJessy3();
-        app.verificaEmailJessy4();
+        //app.verificaEmailJessy2();
+        //app.verificaEmailJessy3();
+        //app.verificaEmailJessy4();
+        //Pruebas Exitosa
+        //app.verificaEmailKevin();
+        //app.verificaEmailJessy4();
+        //Pruebas
+        app.verificaEmailJessy5();
     }
 
     public void verificaEmailKevin() {
@@ -136,6 +142,26 @@ public class ConexionApplication {
             enviarCorreoJessy(session);
         } catch (Exception e) {
             log.error("Error al enviar el correo Jessy4", e);
+        }
+    }
+    
+    public void verificaEmailJessy5() {
+        log.info("Verificando Jessy5...");
+        Properties props = crearPropiedadesSMTP("192.168.11.6", 25);
+        props.put("mail.smtp.auth", "true");
+
+        Session session = Session.getInstance(props, new javax.mail.Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication("noreply@datafast.com.ec", "");
+            }
+        });
+
+        try {
+            conectarYEnviarCorreo(session, "192.168.11.6", "noreply@datafast.com.ec", "");
+            log.info("Conexión con el servidor SMTP exitosa Jessy4!");
+            enviarCorreoJessy(session);
+        } catch (Exception e) {
+            log.error("Error al enviar el correo Jessy5", e);
         }
     }
 
