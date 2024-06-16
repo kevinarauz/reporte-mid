@@ -14,6 +14,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 
+import conexion_prueba.utils.EmailService;
+
 @SpringBootApplication
 public class ConexionApplication {
     
@@ -22,13 +24,22 @@ public class ConexionApplication {
     public static void main(String[] args) {
         ApplicationContext ctx = SpringApplication.run(ConexionApplication.class, args);
         ConexionApplication app = ctx.getBean(ConexionApplication.class);
+        //EmailService gmailService = new EmailService("smtp.gmail.com", 465, "kevin.arauzg@gmail.com", "yjnf xwlo mkbv ybqh", true);
+        //gmailService.sendEmail("kevin.arauzg@gmail.com", "kevin.arauzg@gmail.com", "Prueba Gmail", "Este es el cuerpo del mensaje para Gmail.");
+
+        EmailService dataFastServices = new EmailService("192.168.11.6", 25, "notificacionesti@datafast.com.ec", "5ygcckxV", false);
+        dataFastServices.sendEmail("notificacionesti@datafast.com.ec", "jmunoz@datafast.com.ec", "Prueba Correo", "Este es el cuerpo del mensaje para SMTP.");
+        
+        EmailService dataFastServices2 = new EmailService("192.168.11.6", 25, "noreply@datafast.com.ec", "", false);
+        dataFastServices2.sendEmail("noreply@datafast.com.ec", "jmunoz@datafast.com.ec", "Prueba Correo", "Este es el cuerpo del mensaje para SMTP.");
+        
         //app.verificarConectividad("smtp.gmail.com", 465);
         //app.verificarConectividad("192.168.11.31", 465);
         //app.verificarConectividad("192.168.11.31", 587);
         //app.verificarConectividad("192.168.11.31", 25);
         //app.verificarConectividad("192.168.11.6", 465);
         //app.verificarConectividad("192.168.11.6", 587);
-        app.verificarConectividad("192.168.11.6", 25);
+        //app.verificarConectividad("192.168.11.6", 25);
         //app.verificarConectividad("smtp.office365.com", 465);
         //app.verificarConectividad("smtp.office365.com", 587);
         //app.verificarConectividad("smtp.office365.com", 25);
@@ -42,7 +53,7 @@ public class ConexionApplication {
         //app.verificaEmailKevin();
         //app.verificaEmailJessy4();
         //Pruebas
-        app.verificaEmailJessy5();
+        //app.verificaEmailJessy5();
     }
 
     public void verificaEmailKevin() {
@@ -158,7 +169,7 @@ public class ConexionApplication {
 
         try {
             conectarYEnviarCorreo(session, "192.168.11.6", "noreply@datafast.com.ec", "");
-            log.info("Conexión con el servidor SMTP exitosa Jessy4!");
+            log.info("Conexión con el servidor SMTP exitosa Jessy5!");
             enviarCorreoJessy(session);
         } catch (Exception e) {
             log.error("Error al enviar el correo Jessy5", e);
