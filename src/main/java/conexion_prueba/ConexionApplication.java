@@ -62,7 +62,7 @@ public class ConexionApplication {
         //app.verificaEmailJessy3();
         //app.verificaEmailJessy4();
         //Pruebas Exitosa
-        app.verificaEmailKevin();
+        //app.verificaEmailKevin();
         app.verificaEmailJessy4();
         //Pruebas
         app.verificaEmailJessy5();
