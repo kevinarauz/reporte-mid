@@ -100,7 +100,8 @@ public class EmailService {
         props.put("mail.smtp.host", smtpHost);
         props.put("mail.smtp.port", String.valueOf(smtpPort));
         props.put("mail.smtp.auth", "true");
-        if (useSSL) {
+        //if (useSSL) {
+        if (smtpPort == 465) {
             props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
             props.put("mail.smtp.socketFactory.port", String.valueOf(smtpPort));
         } else if(smtpPort == 587){

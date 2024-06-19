@@ -34,6 +34,7 @@ public class ConexionApplication {
         
         EmailService dataFastServices = new EmailService("192.168.11.6", 25, "notificacionesti@datafast.com.ec", "5ygcckxV", false);
         dataFastServices.sendEmail("notificacionesti@datafast.com.ec", "jmunoz@datafast.com.ec", "Prueba Correo", "Este es el cuerpo del mensaje para SMTP.");
+        dataFastServices.sendEmail("notificacionesti@datafast.com.ec", "kevin.arauzg@gmail.com", "Prueba Correo", "Este es el cuerpo del mensaje para SMTP.");
         
         //File attachment = new File("C:\\Java\\Test.xlsx");
         dataFastServices.sendEmail("notificacionesti@datafast.com.ec", "jmunoz@datafast.com.ec", "Prueba Gmail con archivo", "Este es el cuerpo del mensaje para Gmail con archivo.", attachment);
@@ -61,10 +62,10 @@ public class ConexionApplication {
         //app.verificaEmailJessy3();
         //app.verificaEmailJessy4();
         //Pruebas Exitosa
-        //app.verificaEmailKevin();
-        //app.verificaEmailJessy4();
+        app.verificaEmailKevin();
+        app.verificaEmailJessy4();
         //Pruebas
-        //app.verificaEmailJessy5();
+        app.verificaEmailJessy5();
     }
 
     public void verificaEmailKevin() {
